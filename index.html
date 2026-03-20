@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>여행 취향 발견기</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="vBackground"></div>
+<div id="vFog"></div>
+<div id="vDNA"><div class="v-dna-core"></div></div>
+<div class="progress-bar" id="prog"></div>
+<div class="step-indicator" id="stepInd"></div>
+<div class="share-toast" id="shareToast"></div>
+
+<!-- screens are injected by JS -->
+<div id="sIntro" class="screen active"></div>
+<div id="sAB"    class="screen"></div>
+<div id="sMem"   class="screen"></div>
+<div id="sNeg"   class="screen"></div>
+<div id="sLoad"  class="screen"></div>
+<div id="sResult" class="screen"><div class="res-wrap" id="resContent"></div></div>
+<div id="sPlan"  class="screen"></div>
+<div id="sItin"  class="screen"><div class="itin-wrap" id="itinContent"></div></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
