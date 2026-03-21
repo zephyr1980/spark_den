@@ -899,6 +899,26 @@ const App = {
     el.classList.add('sel');
     AppState.selectedCity = c;
     document.getElementById('customCity').value = '';
+    
+    // UI 업데이트(클래스 추가 등)가 즉각 반영되도록 비동기 처리를 약간 미룸
+    setTimeout(() => {
+      this.prefetchCityData(c);
+    }, 0);
+  },
+
+  async prefetchCityData(city) {
+    if (!city) return;
+    const cityMap = { '포르투': 'porto', '교토': 'kyoto', '파리': 'paris', '런던': 'london', '뉴욕': 'new_york', '로마': 'rome', '바르셀로나': 'barcelona', '도쿄': 'tokyo', '방콕': 'bangkok', '시드니': 'sydney', '프라하': 'prague', '부다페스트': 'budapest', '비엔나': 'vienna', '베를린': 'berlin', '암스테르담': 'amsterdam', '리스본': 'lisbon', '타이베이': 'taipei', '오사카': 'osaka', '삿포로': 'sapporo', '싱가포르': 'singapore', '싱가폴': 'singapore', '홍콩': 'hong_kong', '다낭': 'da_nang', '코타키나발루': 'kota_kinabalu', '발리': 'bali', '치앙마이': 'chiang_mai', '상하이': 'shanghai', '이스탄불': 'istanbul', '두바이': 'dubai', '시애틀': 'seattle', '샌프란시스코': 'san_francisco', '하와이': 'hawaii', '모로코': 'morocco' };
+    const normCity = city.trim().normalize('NFC').toLowerCase();
+    let mappedId = cityMap[normCity] || Object.values(cityMap).find(v => v === normCity) || null;
+    
+    if (mappedId && !AppState.cityData) {
+      console.log(`Prefetching data for ${mappedId}...`);
+      try {
+        const dRes = await fetch(`taste/assets/cities/${mappedId}.json`);
+        if (dRes.ok) AppState.cityData = await dRes.json();
+      } catch(e) { console.log('Prefetch failed, will use fallback'); }
+    }
   },
 
   toggleCal() {
@@ -957,7 +977,7 @@ const App = {
     const dur      = document.getElementById('planDur').value;
     const wish     = document.getElementById('planWish').value.trim();
 
-    // 1. 캐시 확인
+    // 0. 즉시 캐시 확인 (로딩 화면 없이)
     const cacheKey = this._getItinCacheKey(city, dur, p);
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
@@ -976,7 +996,7 @@ const App = {
     }
     
     // ── 도시 데이터 백그라운드 Fetch ──
-    const cityMap = { '포르투': 'porto', '교토': 'kyoto', '파리': 'paris', 'paris': 'paris', '런던': 'london', 'london': 'london', '뉴욕': 'new_york', 'new_york': 'new_york', '로마': 'rome', 'rome': 'rome', '바르셀로나': 'barcelona', 'barcelona': 'barcelona', '도쿄': 'tokyo', 'tokyo': 'tokyo', '방콕': 'bangkok', 'bangkok': 'bangkok', '시드니': 'sydney', 'sydney': 'sydney', '프라하': 'prague', 'prague': 'prague' };
+    const cityMap = { '포르투': 'porto', '교토': 'kyoto', '파리': 'paris', '런던': 'london', '뉴욕': 'new_york', '로마': 'rome', '바르셀로나': 'barcelona', '도쿄': 'tokyo', '방콕': 'bangkok', '시드니': 'sydney', '프라하': 'prague', '부다페스트': 'budapest', '비엔나': 'vienna', '베를린': 'berlin', '암스테르담': 'amsterdam', '리스본': 'lisbon', '타이베이': 'taipei', '오사카': 'osaka', '삿포로': 'sapporo', '싱가포르': 'singapore', '싱가폴': 'singapore', '홍콩': 'hong_kong', '다낭': 'da_nang', '코타키나발루': 'kota_kinabalu', '발리': 'bali', '치앙마이': 'chiang_mai', '상하이': 'shanghai', '이스탄불': 'istanbul', '두바이': 'dubai', '시애틀': 'seattle', '샌프란시스코': 'san_francisco', '하와이': 'hawaii', '모로코': 'morocco' };
     
     // 로컬 환경(file://)에서의 fetch 제한을 고려한 주요 도시 데이터 내장
     const CITY_FALLBACKS = {
@@ -1020,6 +1040,42 @@ const App = {
           {"lat":51.5033, "lng":-0.1195, "name":"런던 아이", "time":"오후 7시", "note":"보름달처럼 런던을 비추는 거행 관람차"},
           {"lat":51.5081, "lng":-0.0759, "name":"타워 브릿지", "time":"오후 3시", "note":"템즈강의 품격을 더하는 개폐식 도개교"}
         ] }
+      },
+      'kyoto': {
+        "description": "천년의 역사를 간직한 교토. 붉은 도리이 길과 조용한 사찰에서 일본의 정수를 만나보세요.",
+        "senses": { "sight": "후시미 이나리의 끝없는 붉은 도리이", "sound": "대나무 숲을 흔드는 바람 소리", "smell": "갓 우려낸 말차의 쌉싸름한 향" },
+        "map": { "lat": 35.0116, "lng": 135.7681, "zoom": 12, "legend": [{"c":"#C4704B","l":"명소"}], "pins": [
+          {"lat":34.9671, "lng":135.7727, "name":"후시미 이나리 대사", "time":"오전 9시", "note":"수천 개의 도리이가 장관을 이루는 산책로"},
+          {"lat":35.0394, "lng":135.7292, "name":"금각사(킨카쿠지)", "time":"오후 1시", "note":"연못 위에 빛나는 화려한 황금 빛 사찰"},
+          {"lat":34.9949, "lng":135.7850, "name":"기요미즈데라(청수사)", "time":"오후 4시", "note":"교토 시내가 한눈에 내려다보이는 절벽 위 사찰"}
+        ] }
+      },
+      'barcelona': {
+        "description": "가우디의 예술이 살아있는 바르셀로나. 지중해의 햇살과 화려한 건축미를 즐겨보세요.",
+        "senses": { "sight": "사그라다 파밀리아의 압도적인 스테인드글라스", "sound": "람블라스 거리의 활기찬 버스킹", "smell": "보케리아 시장의 신선한 하몬과 과일 향" },
+        "map": { "lat": 41.3851, "lng": 2.1734, "zoom": 13, "legend": [{"c":"#C4704B","l":"명소"}], "pins": [
+          {"lat":41.4036, "lng":2.1744, "name":"사그라다 파밀리아", "time":"오전 10시", "note":"가우디 최후의 걸작, 경이로운 성당"},
+          {"lat":41.4145, "lng":2.1527, "name":"구엘 공원", "time":"오후 3시", "note":"동화 속 세상 같은 가우디의 공원"},
+          {"lat":41.4034, "lng":2.1648, "name":"카사 바트요", "time":"오전 11시", "note":"뼈의 집이라 불리는 독창적인 가우디 건축물"}
+        ] }
+      },
+      'tokyo': {
+        "description": "과거와 미래가 공존하는 거대 도시 도쿄. 화려한 네온사인과 조용한 신사를 동시에 경험해 보세요.",
+        "senses": { "sight": "시부야 스크램블 교차로의 압도적인 인파", "sound": "지하철의 정교한 안내 방송과 도시 소음", "smell": "골목길 야키토리 식당에서 풍기는 고소한 연기 향" },
+        "map": { "lat": 35.6895, "lng": 139.6917, "zoom": 12, "legend": [{"c":"#C4704B","l":"명소"}], "pins": [
+          {"lat":35.6585, "lng":139.7013, "name":"시부야 스크램블 교차로", "time":"오후 6시", "note":"도쿄의 활기를 가장 잘 느낄 수 있는 세계 최대의 교차로"},
+          {"lat":35.7148, "lng":139.7967, "name":"아사쿠사 센소지", "time":"오전 10시", "note":"도쿄에서 가장 오래된 절, 에도시대의 정취"},
+          {"lat":35.6586, "lng":139.7454, "name":"도쿄 타워", "time":"오후 8시", "note":"도시의 야경을 감상할 수 있는 랜드마크"}
+        ] }
+      },
+      'bangkok': {
+        "description": "천사들의 도시 방콕. 화려한 왕궁과 활기 넘치는 시장, 맛있는 길거리 음식의 천국입니다.",
+        "senses": { "sight": "짜오프라야 강변에 빛나는 왓 아룬의 야경", "sound": "툭툭이의 엔진 소리와 분주한 시장통", "smell": "코코넛 밀크와 향긋한 고수 맛이 어우러진 똠얌꿍 향" },
+        "map": { "lat": 13.7563, "lng": 100.5018, "zoom": 13, "legend": [{"c":"#C4704B","l":"명소"}], "pins": [
+          {"lat":13.7513, "lng":100.4927, "name":"방콕 왕궁", "time":"오전 9시", "note":"태국 왕실의 화려함과 정교한 사찰 건축의 정수"},
+          {"lat":13.7437, "lng":100.4918, "name":"왓 아룬(새벽 사원)", "time":"오후 6시", "note":"강변에 우뚝 솟은 아름다운 도자기 탑"},
+          {"lat":13.7460, "lng":100.5348, "name":"시암 스퀘어", "time":"오후 2시", "note":"방콕의 트렌드를 한눈에 볼 수 있는 쇼핑과 문화의 중심지"}
+        ] }
       }
     };
 
@@ -1027,17 +1083,21 @@ const App = {
     let mappedId = cityMap[normCity] || Object.values(cityMap).find(v => v === normCity) || null;
     
     if (mappedId) {
-      // 1. 우선 내장 데이터 확인
-      if (CITY_FALLBACKS[mappedId]) {
-        AppState.cityData = CITY_FALLBACKS[mappedId];
-        console.log(`Using fallback data for ${mappedId}`);
+      if (AppState.cityData) {
+        // prefetchCityData에서 이미 로드됨 — 재fetch 스킵
+        console.log(`City data already cached for ${mappedId}, skipping fetch`);
+      } else {
+        // 1. 우선 내장 데이터 확인
+        if (CITY_FALLBACKS[mappedId]) {
+          AppState.cityData = CITY_FALLBACKS[mappedId];
+          console.log(`Using fallback data for ${mappedId}`);
+        }
+        // 2. 외부 JSON Fetch 시도
+        try {
+          const dRes = await fetch(`taste/assets/cities/${mappedId}.json`);
+          if (dRes.ok) AppState.cityData = await dRes.json();
+        } catch(e) { /* fetch 실패 시 AppState.cityData는 유지됨 */ }
       }
-      
-      // 2. 외부 데이터 Fetch 시도 (내장 데이터가 있더라도 최신 정보 업데이트 시도)
-      try {
-        const dRes = await fetch(`taste/assets/cities/${mappedId}.json`);
-        if (dRes.ok) AppState.cityData = await dRes.json();
-      } catch(e) { /* fetch 실패 시 AppState.cityData는 유지됨 */ }
     } else {
       AppState.cityData = null;
     }
@@ -1054,18 +1114,11 @@ const App = {
     const levelMap = { 1: '매우 저렴', 2: '저렴', 3: '보통', 4: '비쌈', 5: '매우 비쌈' };
     const costHint = `이 도시의 물가 수준은 5점 만점에 ${costLevel}점(${levelMap[costLevel]}) 입니다.`;
 
-    const prompt = `여행 일정 전문가. 실제 존재하는 장소(정확한 상호명·주소·가격 포함)로 JSON만 출력. 설명 없이 JSON만. ${cityContext}
-여행자:${p?.typeName||''}의 성향을 최우선 반영하여 장소 선정. 
-기피(반드시 제외):${neg.join(',')||'없음'}
-여행지:${city} / 출발일:${dateStr} / 기간:${dur}일 / 요청:${wish||'없음'} / 물가참고:${costHint}
-규칙: 
-1. 하루 5~7개 spot(오전·점심·오후·저녁·야간 포함). 
-2. [중요] '실제장소명', '주소|가격' 같은 견본 텍스트를 그대로 쓰지 말고, 반드시 실제 존재하는 구체적인 상호명과 정보를 입력할 것. 
-3. 각 spot의 name은 실제 현지 장소명(한국어 표기). 
-4. note에 정확한 주소, 입장료/식사 가격(현지 통화 병기), 예약 필요 여부, 로컬 팁, 공간의 분위기 묘사를 "상세히" 포함. 
-5. budgetPerDay는 실제 물가를 반영하여 구체적 숫자로 제시.
-6. mapFocus: 이 일정이 해당 도시의 어떤 구역에 집중되어 있는지(예: '역사지구와 강변 중심') 1문장 설명.
-{"destination":"","title":"","summary":"","palette":["#hex1","#hex2","#hex3"],"cityTagline":"","heroEmoji":"","mapFocus":"","budgetPerDay":{"food":0,"transport":0,"entrance":0},"days":[{"day":1,"title":"","desc":"","spots":[{"time":"09:00","name":"[실제 장소 이름]","note":"[상세 주소] | [예상 가격] | [로컬 팁] | [분위기 묘사]","sense":"[이 공간에서 느껴지는 한 문장의 감각]","tags":["해시태그1"],"cost":0}]}],"tips":""}`;
+    const prompt = `여행 일정 전문가. JSON만 출력. 설명 없이 JSON만. ${cityContext}
+여행자:${p?.typeName||''}의 성향 반영. 기피(제외):${neg.join(',')||'없음'}
+여행지:${city} / 출발일:${dateStr} / 기간:${dur}일 / 요청:${wish||'없음'} / 물가:${costHint}
+규칙: 하루 3~4개 spot(오전·점심·오후·저녁), 실제 현지 상호명(한국어), note에 주소·가격·팁 포함, mapFocus 1문장.
+{"destination":"","title":"","summary":"","palette":["#hex1","#hex2","#hex3"],"cityTagline":"","heroEmoji":"","mapFocus":"","budgetPerDay":{"food":0,"transport":0,"entrance":0},"days":[{"day":1,"title":"","desc":"","spots":[{"time":"09:00","name":"","note":"","sense":"","tags":[],"cost":0}]}],"tips":""}`;
 
     try {
       // ── 스트리밍 호출 ──
@@ -1073,8 +1126,8 @@ const App = {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-          model: 'claude-3-5-sonnet-20241022',
-          max_tokens: 4500,
+          model: 'claude-3-5-haiku-20241022',
+          max_tokens: 3000,
           stream: true,
           messages: [{role:'user', content: prompt}]
         })
@@ -1117,7 +1170,7 @@ const App = {
 
     } catch(e) {
       console.error(e);
-      this._fallbackItinerary(city, dur, dateStr);
+      this._fallbackItinerary(city, dur, dateStr, mappedId);
     }
   },
 
@@ -1295,7 +1348,7 @@ const App = {
   },
 
   /* ── CITY-AWARE FALLBACK ITINERARY ── */
-  _fallbackItinerary(city, dur, dateStr) {
+  _fallbackItinerary(city, dur, dateStr, mappedId) {
     const cd = AppState.cityData;
     const n = parseInt(dur), days = [];
     const makeSpot = (time, name, note, sense, tags, cost=0) => ({time, name, note, sense, tags, cost});
