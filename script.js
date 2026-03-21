@@ -377,6 +377,7 @@ const UI = {
   },
 
   budgetTab: (bpd, dur) => {
+    return '<div style="color:var(--ink-faint);font-size:.85rem;padding:3rem 0;text-align:center;"><div style="font-size:2rem;margin-bottom:0.8rem;opacity:0.3;">🔒</div><div style="color:var(--ink-faint);line-height:1.5;letter-spacing:-0.5px;">보다 정확한 정보 제공을 위해<br>잠시 문을 닫습니다.</div></div>';
     const daily = Object.values(bpd).reduce((a, b) => a + (b || 0), 0);
     const total = daily * parseInt(dur);
     if (!daily) return '<div style="color:var(--ink-faint);font-size:.85rem;padding:1rem 0">예산 정보를 불러오는 중입니다.</div>';
