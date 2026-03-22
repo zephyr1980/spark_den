@@ -47,17 +47,36 @@ Object.assign(App, {
     return null; // 28 미만은 뱃지 없음
   },
 
+  /* ── 도시 목록 필터링: 프로필 있을 때만 적용 ──
+     완벽+최고 일치 (score ≥ 65): 전체 노출
+     잘 맞아요 (52~64):          상위 5개까지만
+     무난해요 이하 (< 52):       숨김              */
+  _filterCitiesByMatch(sortedCities, profile) {
+    if (!profile) return sortedCities; // 프로필 없으면 전부 노출
+
+    let goodCount = 0;
+    return sortedCities.filter(c => {
+      const cityId = CONFIG.CITY_MAP[c];
+      const score  = this._calcMatchScore(profile, cityId);
+      if (score === null) return false;
+      if (score >= 65) return true;                       // 완벽·최고 일치: 전부
+      if (score >= 52 && goodCount < 5) { goodCount++; return true; } // 잘 맞아요: 5개
+      return false;                                       // 무난해요 이하: 숨김
+    });
+  },
+
   _renderPlanScreen() {
     const p = AppState.currentProfile;
     const profileBadge = p ? `<div class="plan-dna-badge">✦ ${p.typeName}</div>` : '';
-    const sortedCities = this._sortCitiesByMatch(p);
+    const sortedCities  = this._sortCitiesByMatch(p);
+    const visibleCities = this._filterCitiesByMatch(sortedCities, p);
 
     document.getElementById('sPlan').innerHTML = `<div class="plan-wrap">
       ${profileBadge}
       <h2>어디로 떠나시겠어요?</h2>
-      <div class="sub">${p ? '취향 분석 기반으로 잘 맞는 도시 순으로 정렬했어요' : '도시를 선택하거나 직접 입력하세요'}</div>
+      <div class="sub">${p ? '취향에 잘 맞는 도시만 골랐어요 · 직접 입력도 가능해요' : '도시를 선택하거나 직접 입력하세요'}</div>
       <div class="city-grid">
-        ${sortedCities.map(c => {
+        ${visibleCities.map(c => {
           const cityId = CONFIG.CITY_MAP[c];
           const score  = this._calcMatchScore(p, cityId);
           const level  = this._matchLevel(score);
