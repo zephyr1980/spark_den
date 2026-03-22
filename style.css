@@ -419,6 +419,8 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
   filter: saturate(var(--v-saturate)) contrast(var(--v-contrast));
   transition: all 1.5s ease;
   overflow: hidden;
+  will-change: filter, background;
+  transform: translateZ(0);
 }
 
 #vFog {
@@ -430,6 +432,8 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
   -webkit-backdrop-filter: blur(calc(var(--v-blur) / 2));
   pointer-events: none;
   transition: all 1.2s ease;
+  will-change: backdrop-filter;
+  transform: translateZ(0);
 }
 
 #vBackground::after {
@@ -500,10 +504,11 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
   z-index: -1;
   filter: blur(var(--v-blur));
   opacity: var(--v-opacity);
-  transform: scale(var(--v-scale));
+  transform: scale(var(--v-scale)) translateZ(0);
   transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
   background: radial-gradient(circle, rgba(196, 112, 75, 0.2) 0%, transparent 70%);
+  will-change: transform, filter, opacity;
 }
 
 .v-dna-core {

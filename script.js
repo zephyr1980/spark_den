@@ -1303,6 +1303,7 @@ const App = {
 
     } catch(e) {
       console.error(e);
+      this.toast('AI 통신 지연으로 기본 맞춤 일정을 제공합니다 🥲');
       this._fallbackItinerary(city, dur, dateStr, mappedId);
     }
   },
