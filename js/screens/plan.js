@@ -190,7 +190,7 @@ Object.assign(App, {
 
   /* ── 도시 선택 ── */
   pickCity(el, c) {
-    document.querySelectorAll('.city-chip').forEach(x => x.classList.remove('sel'));
+    document.querySelectorAll('.city-card, .city-chip').forEach(x => x.classList.remove('sel'));
     el.classList.add('sel');
     AppState.selectedCity = c;
     AppState.cityData = null;
