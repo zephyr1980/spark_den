@@ -31,10 +31,10 @@ Object.assign(App, {
   /* ── 매칭 점수 → 뱃지 레벨 ── */
   _matchLevel(score) {
     if (score === null) return null;
-    if (score >= 80) return { cls: 'match-top',  label: '최고 일치' };
-    if (score >= 65) return { cls: 'match-good', label: '잘 맞아요' };
-    if (score >= 50) return { cls: 'match-ok',   label: '무난해요' };
-    return null; // 50 미만은 뱃지 없음
+    if (score >= 70) return { cls: 'match-top',  label: '최고 일치' };
+    if (score >= 50) return { cls: 'match-good', label: '잘 맞아요' };
+    if (score >= 40) return { cls: 'match-ok',   label: '무난해요' };
+    return null; // 40 미만은 뱃지 없음
   },
 
   _renderPlanScreen() {
