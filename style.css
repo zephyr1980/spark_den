@@ -228,11 +228,89 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--ink);color:var(--cre
 .plan-input:focus{outline:none;border-color:var(--terra)}.plan-input::placeholder{color:var(--ink-faint)}
 select.plan-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239A9590' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 1rem center;padding-right:2.5rem;cursor:pointer}
 select.plan-input option{background:var(--ink);color:var(--cream)}
-/* 도시 칩 그리드 */
-.city-grid{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.8rem;justify-content:center}
-.city-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.6rem}
-.city-chip{padding:.45rem .9rem;border:1px solid rgba(245,240,232,.1);border-radius:20px;font-size:.8rem;cursor:pointer;transition:all .2s;color:var(--ink-faint)}
-.city-chip:hover{border-color:rgba(245,240,232,.3);color:var(--cream)}.city-chip.sel{border-color:var(--sage);background:rgba(122,154,126,.12);color:var(--cream)}
+/* ── 도시 그리드 + 카드 ── */
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: .6rem;
+  margin-bottom: .6rem;
+}
+/* 섹션 헤더 */
+.city-section-head {
+  grid-column: 1 / -1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem;
+  letter-spacing: 2px;
+  color: var(--terra-light);
+  text-transform: uppercase;
+  margin: .8rem 0 .2rem;
+  padding-left: .3rem;
+}
+.city-section-sub { color: var(--sage); margin-top: 1.2rem; }
+
+/* 도시 카드 */
+.city-card {
+  position: relative;
+  padding: .75rem .85rem .65rem 1rem;
+  border: 1px solid rgba(245,240,232,.1);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s, box-shadow .2s, transform .15s;
+  background: rgba(245,240,232,.03);
+  text-align: left;
+  overflow: hidden;
+}
+/* 왼쪽 액센트 바 */
+.city-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: 10px 0 0 10px;
+  background: transparent;
+  transition: background .2s;
+}
+.city-card:hover { border-color: rgba(245,240,232,.25); transform: translateY(-1px); }
+.city-card.sel   {
+  border-color: var(--terra);
+  background: rgba(196,112,75,.08);
+  box-shadow: 0 0 14px rgba(196,112,75,.2);
+}
+.city-card.sel::before { background: var(--terra); }
+
+/* 액센트 색상: 매칭 레벨별 */
+.card-accent-match-perfect::before { background: #9A7AB4; }
+.card-accent-match-top::before     { background: var(--terra); }
+.card-accent-match-good::before    { background: var(--sage); }
+.card-accent-match-ok::before      { background: rgba(245,240,232,.2); }
+
+/* 카드 내부 */
+.city-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .3rem;
+  margin-bottom: .3rem;
+}
+.city-card-name {
+  font-size: .88rem;
+  color: var(--cream);
+  font-weight: 400;
+  line-height: 1.3;
+}
+.city-card-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .72rem;
+  color: var(--terra-light);
+  flex-shrink: 0;
+}
+.city-card-score small { font-size: .55rem; }
+
+/* 레거시 chip — 이전 참조 호환 유지 */
+.city-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .6rem; }
+.city-chip  { padding:.45rem .9rem; border:1px solid rgba(245,240,232,.1); border-radius:20px; font-size:.8rem; cursor:pointer; transition:all .2s; color:var(--ink-faint); }
+.city-chip:hover { border-color:rgba(245,240,232,.3); color:var(--cream); }
+.city-chip.sel   { border-color:var(--sage); background:rgba(122,154,126,.12); color:var(--cream); }
 /* 커스텀 도시 입력 */
 .custom-city-input{width:100%;background:rgba(245,240,232,.04);border:1px solid rgba(245,240,232,.08);border-radius:8px;padding:.7rem 1rem;color:var(--cream);font-family:'Noto Sans KR',sans-serif;font-size:.85rem;font-weight:300;transition:border-color .2s;margin-bottom:.8rem}
 .custom-city-input::placeholder{color:var(--ink-faint)}.custom-city-input:focus{outline:none;border-color:var(--terra)}
@@ -669,9 +747,11 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
   font-size: .75rem;
   font-weight: 600;
 }
-.preview-match-score.match-top  { color: var(--terra-light); }
-.preview-match-score.match-good { color: var(--sage); }
-.preview-match-score.match-ok   { color: var(--gold); }
+.preview-match-score.match-perfect { color: #A084E8; }
+.preview-match-score.match-top     { color: var(--terra-light); }
+.preview-match-score.match-good    { color: var(--sage); }
+.preview-match-score.match-ok      { color: var(--gold); }
+.preview-match-score.match-low     { color: var(--ink-faint); }
 
 /* 차원 비교 바 */
 .preview-match-bars { display: flex; flex-direction: column; gap: .65rem; }
@@ -701,6 +781,84 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
 }
 .pmb-hint { font-size: .62rem; text-align: right; }
 .pmb-legend { font-size: .63rem; color: var(--ink-faint); margin-top: .75rem; text-align: right; opacity: .7; }
+
+/* ── 취향 비교 듀얼바 (새 버전) ─────────────────── */
+.pmb-row2 {
+  padding: .6rem 0;
+  border-bottom: 1px solid rgba(245,240,232,.05);
+}
+.pmb-row2:last-child { border-bottom: none; }
+
+/* 극단 레이블 줄 */
+.pmb2-poles {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: .35rem;
+}
+.pmb2-pole-l, .pmb2-pole-r {
+  font-size: .62rem;
+  color: var(--ink-faint);
+  letter-spacing: .3px;
+}
+.pmb2-pole-r { text-align: right; }
+
+/* 두 개 바 묶음 */
+.pmb2-bars { display: flex; flex-direction: column; gap: .22rem; }
+
+/* 각 바 행: [라벨] [바] [경향] */
+.pmb2-bar-row {
+  display: grid;
+  grid-template-columns: 2rem 1fr 3.5rem;
+  align-items: center;
+  gap: .5rem;
+}
+.pmb2-who {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .6rem;
+  color: var(--ink-faint);
+  text-align: right;
+}
+.pmb2-track {
+  height: 6px;
+  background: rgba(245,240,232,.07);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.pmb2-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width .6s cubic-bezier(.4,0,.2,1);
+}
+/* 내 취향 바 — 따뜻한 테라코타 */
+.pmb2-user { background: rgba(196,112,75,.7); }
+
+/* 도시 바 — 차이에 따라 색상 변화 */
+.pmb2-city.pmb-match { background: rgba(122,154,126,.75); }  /* 잘 맞아요 — 세이지 그린 */
+.pmb2-city.pmb-near  { background: rgba(196,168,75,.65); }   /* 비슷해요  — 골드 */
+.pmb2-city.pmb-far   { background: rgba(180,122,122,.65); }  /* 차이 있음 — 로즈 */
+
+.pmb2-tend {
+  font-size: .6rem;
+  color: var(--ink-faint);
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+/* 상태 텍스트 */
+.pmb2-status {
+  display: block;
+  font-size: .68rem;
+  font-family: 'JetBrains Mono', monospace;
+  text-align: right;
+  margin-top: .3rem;
+  letter-spacing: .5px;
+}
+.pmb2-status.pmb-match { color: var(--sage); }
+.pmb2-status.pmb-near  { color: var(--gold); }
+.pmb2-status.pmb-far   { color: var(--rose); }
 
 /* ── 수제 SVG 아이콘 공통 ── */
 .ic {

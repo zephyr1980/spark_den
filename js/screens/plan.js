@@ -65,28 +65,63 @@ Object.assign(App, {
     });
   },
 
+  /* ── 도시 카드 HTML 생성 헬퍼 ── */
+  _cityCardHtml(c, p) {
+    const cityId    = CONFIG.CITY_MAP[c];
+    const score     = this._calcMatchScore(p, cityId);
+    const level     = this._matchLevel(score);
+    const badge     = level ? `<span class="match-badge ${level.cls}">${level.label}</span>` : '';
+    const scoreHtml = (score !== null && p)
+      ? `<span class="city-card-score">${score}<small>%</small></span>` : '';
+    const accentCls = level ? ` card-accent-${level.cls}` : '';
+    return `<div class="city-card${level ? ' has-match' : ''}${accentCls}"
+              onclick="App.pickCity(this,'${c}')"
+              data-city-id="${cityId || ''}" data-match="${score ?? ''}">
+              <div class="city-card-top">
+                <span class="city-card-name">${c}</span>
+                ${scoreHtml}
+              </div>
+              ${badge}
+            </div>`;
+  },
+
   _renderPlanScreen() {
     const p = AppState.currentProfile;
     const profileBadge = p ? `<div class="plan-dna-badge">✦ ${p.typeName}</div>` : '';
     const sortedCities  = this._sortCitiesByMatch(p);
     const visibleCities = this._filterCitiesByMatch(sortedCities, p);
 
+    /* 프로필 있을 때 — 상위/일치 두 그룹으로 나눠 섹션 헤더와 함께 렌더 */
+    let citiesHtml;
+    if (p) {
+      const topCities  = visibleCities.filter(c => {
+        const s = this._calcMatchScore(p, CONFIG.CITY_MAP[c]);
+        return s !== null && s >= 65;
+      });
+      const goodCities = visibleCities.filter(c => {
+        const s = this._calcMatchScore(p, CONFIG.CITY_MAP[c]);
+        return s !== null && s >= 52 && s < 65;
+      });
+      citiesHtml = `
+        ${topCities.length ? `
+          <div class="city-section-head">✦ 가장 잘 맞는 도시</div>
+          <div class="city-grid">${topCities.map(c => this._cityCardHtml(c, p)).join('')}</div>
+        ` : ''}
+        ${goodCities.length ? `
+          <div class="city-section-head city-section-sub">잘 맞아요</div>
+          <div class="city-grid">${goodCities.map(c => this._cityCardHtml(c, p)).join('')}</div>
+        ` : ''}`;
+    } else {
+      citiesHtml = `<div class="city-grid">
+        ${visibleCities.map(c => this._cityCardHtml(c, null)).join('')}
+      </div>`;
+    }
+
     document.getElementById('sPlan').innerHTML = `<div class="plan-wrap">
       ${profileBadge}
       <h2>어디로 떠나시겠어요?</h2>
       <div class="sub">${p ? '취향에 잘 맞는 도시만 골랐어요 · 직접 입력도 가능해요' : '도시를 선택하거나 직접 입력하세요'}</div>
-      <div class="city-grid">
-        ${visibleCities.map(c => {
-          const cityId = CONFIG.CITY_MAP[c];
-          const score  = this._calcMatchScore(p, cityId);
-          const level  = this._matchLevel(score);
-          const badge  = level ? `<span class="match-badge ${level.cls}">${level.label}</span>` : '';
-          const perfectCls = level?.cls === 'match-perfect' ? ' match-perfect-chip' : '';
-          return `<div class="city-chip${level ? ' has-match' : ''}${perfectCls}" onclick="App.pickCity(this,'${c}')" data-city-id="${cityId || ''}" data-match="${score ?? ''}">
-            ${badge}<span class="city-name">${c}</span>
-          </div>`;
-        }).join('')}
-      </div>
+      ${citiesHtml}
       <input class="custom-city-input" id="customCity" placeholder="직접 입력 (예: 리오데자네이루)">
 
       <div id="cityPreview" class="city-preview" style="display:none"></div>
@@ -201,22 +236,40 @@ Object.assign(App, {
           </div>
           <div class="preview-match-bars">
             ${['crowd','explore','pace','immersion'].map((k, i) => {
-              const labels = [['활기','고요'],['랜드마크','뒷골목'],['빼곡','여유'],['관광객','현지인']];
-              const pVal = p.dimensions[k]?.score ?? 50;
-              const cVal = CONFIG.CITY_DIMENSIONS[cId]?.[k] ?? 50;
-              const diff = Math.abs(pVal - cVal);
-              const barColor = diff < 20 ? 'var(--sage)' : diff < 40 ? 'var(--gold)' : 'var(--rose)';
-              return `<div class="pmb-row">
-                <div class="pmb-label">${labels[i][0]} ↔ ${labels[i][1]}</div>
-                <div class="pmb-track">
-                  <div class="pmb-fill" style="width:${pVal}%;background:var(--terra);opacity:0.5"></div>
-                  <div class="pmb-fill pmb-city" style="left:${cVal}%;background:${barColor}"></div>
+              const poles   = [['활기','고요'],['랜드마크','뒷골목'],['빼곡','여유'],['관광객','현지인']];
+              const pVal    = p.dimensions[k]?.score ?? 50;
+              const cVal    = CONFIG.CITY_DIMENSIONS[cId]?.[k] ?? 50;
+              const diff    = Math.abs(pVal - cVal);
+              const diffCls = diff < 20 ? 'pmb-match' : diff < 40 ? 'pmb-near' : 'pmb-far';
+              const diffTxt = diff < 20 ? '잘 맞아요' : diff < 40 ? '비슷해요' : '차이 있음';
+              /* 극단 방향 텍스트: 값이 낮으면 왼쪽 극단명, 높으면 오른쪽 극단명 */
+              const pTendency = pVal < 42 ? poles[i][0] : pVal > 58 ? poles[i][1] : '보통';
+              const cTendency = cVal < 42 ? poles[i][0] : cVal > 58 ? poles[i][1] : '보통';
+              return `<div class="pmb-row2">
+                <div class="pmb2-poles">
+                  <span class="pmb2-pole-l">${poles[i][0]}</span>
+                  <span class="pmb2-pole-r">${poles[i][1]}</span>
                 </div>
-                <div class="pmb-hint" style="color:${barColor}">${diff < 20 ? '잘 맞아요' : diff < 40 ? '비슷해요' : '차이 있음'}</div>
+                <div class="pmb2-bars">
+                  <div class="pmb2-bar-row">
+                    <span class="pmb2-who">나</span>
+                    <div class="pmb2-track">
+                      <div class="pmb2-fill pmb2-user" style="width:${pVal}%"></div>
+                    </div>
+                    <span class="pmb2-tend">${pTendency}</span>
+                  </div>
+                  <div class="pmb2-bar-row">
+                    <span class="pmb2-who">도시</span>
+                    <div class="pmb2-track">
+                      <div class="pmb2-fill pmb2-city ${diffCls}" style="width:${cVal}%"></div>
+                    </div>
+                    <span class="pmb2-tend">${cTendency}</span>
+                  </div>
+                </div>
+                <span class="pmb2-status ${diffCls}">${diffTxt}</span>
               </div>`;
             }).join('')}
           </div>
-          <div class="pmb-legend"><span style="color:var(--terra)">■ 내 취향</span> <span style="margin-left:1rem">■ 도시 특성</span></div>
         </div>` : '';
 
     preview.innerHTML = `
