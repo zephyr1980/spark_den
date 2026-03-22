@@ -52,17 +52,19 @@ Object.assign(App, {
      잘 맞아요 (52~64):          상위 5개까지만
      무난해요 이하 (< 52):       숨김              */
   _filterCitiesByMatch(sortedCities, profile) {
-    if (!profile) return sortedCities; // 프로필 없으면 전부 노출
+    if (!profile) return sortedCities.slice(0, 15); // 프로필 없으면 상위 15개
 
     let goodCount = 0;
-    return sortedCities.filter(c => {
+    const result = [];
+    for (const c of sortedCities) {
+      if (result.length >= 15) break;                    // 최대 15개
       const cityId = CONFIG.CITY_MAP[c];
       const score  = this._calcMatchScore(profile, cityId);
-      if (score === null) return false;
-      if (score >= 65) return true;                       // 완벽·최고 일치: 전부
-      if (score >= 52 && goodCount < 5) { goodCount++; return true; } // 잘 맞아요: 5개
-      return false;                                       // 무난해요 이하: 숨김
-    });
+      if (score === null) continue;
+      if (score >= 65) { result.push(c); continue; }                          // 완벽·최고 일치
+      if (score >= 52 && goodCount < 5) { goodCount++; result.push(c); }      // 잘 맞아요: 5개 한도
+    }
+    return result;
   },
 
   /* ── 도시 카드 HTML 생성 헬퍼 ── */
