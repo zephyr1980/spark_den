@@ -3,9 +3,14 @@
 ════════════════════════════════════════════ */
 Object.assign(App, {
 
+  /* 프리셋 id → SVG 심볼 id 매핑 */
+  _presetIconId(id) {
+    return { zen:'ic-zen', local:'ic-leaf', bold:'ic-explorer', flaneur:'ic-flaneur' }[id] || 'ic-compass';
+  },
+
   renderIntro() {
     document.getElementById('sIntro').innerHTML = `<div class="intro">
-      <div style="font-size:2.4rem;margin-bottom:1.1rem;opacity:.75">🧭</div>
+      <svg class="ic-logo" aria-hidden="true"><use href="#ic-compass"/></svg>
       <div class="intro-value">취향 기반 여행 큐레이션</div>
       <h1>당신의 <em>여행 취향</em>을<br>발견해 보세요</h1>
       <p>직접 말하기 어려운 여행 취향도 있습니다.<br>몇 가지 선택만으로 당신만의 여행 DNA를 찾고,<br>그에 맞는 실제 일정까지 만들어 드립니다.</p>
@@ -13,7 +18,7 @@ Object.assign(App, {
       <div class="preset-grid">
         ${CONFIG.PRESETS.map(p => `
           <div class="preset-card" onclick="App.selectPreset('${p.id}')">
-            <div class="preset-emoji">${p.emoji}</div>
+            <svg class="ic-preset" aria-hidden="true"><use href="#${this._presetIconId(p.id)}"/></svg>
             <div class="preset-info">
               <div class="preset-title">${p.title}</div>
               <div class="preset-desc">${p.desc}</div>

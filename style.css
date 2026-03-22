@@ -702,6 +702,32 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
 .pmb-hint { font-size: .62rem; text-align: right; }
 .pmb-legend { font-size: .63rem; color: var(--ink-faint); margin-top: .75rem; text-align: right; opacity: .7; }
 
+/* ── 수제 SVG 아이콘 공통 ── */
+.ic {
+  display: inline-block;
+  width: 1em; height: 1em;
+  stroke: currentColor; fill: none;
+  vertical-align: middle; flex-shrink: 0;
+}
+.ic-logo {
+  width: 2.8rem; height: 2.8rem;
+  color: var(--cream); opacity: .75;
+  margin: 0 auto 1.1rem; display: block;
+}
+.ic-preset {
+  width: 2.4rem; height: 2.4rem;
+  color: var(--cream); opacity: .8;
+  display: block; margin: 0 auto .6rem;
+  transition: opacity .2s, transform .25s cubic-bezier(.175,.885,.32,1.275);
+}
+.preset-card:hover .ic-preset,
+.preset-card.active .ic-preset { opacity: 1; transform: scale(1.1); }
+.ic-map-lg {
+  width: 2.2rem; height: 2.2rem;
+  color: var(--ink-faint); opacity: .3;
+  display: block; margin: 0 auto .6rem;
+}
+
 /* ── 매칭 뱃지 5단계 ── */
 .match-badge.match-perfect {
   background: linear-gradient(135deg, #7B6CF0, #A084E8);

@@ -210,7 +210,7 @@ Object.assign(App, {
     document.getElementById('itinContent').innerHTML = `
       <div class="city-hero" style="background:linear-gradient(135deg,${palette[0]}22 0%,${palette[1]}22 100%);border:1px solid ${palette[0]}30">
         <div class="city-hero-eyebrow" style="color:${palette[0]}">✦ ${p?.typeName||'여행자'}의 맞춤 일정</div>
-        <div class="city-hero-name">${it.heroEmoji||'🗺️'} ${it.destination||city}</div>
+        <div class="city-hero-name"><svg style="width:1.1em;height:1.1em;vertical-align:-.15em;stroke:currentColor;fill:none;margin-right:.3em" aria-hidden="true"><use href="#ic-map"/></svg>${it.destination||city}</div>
         <div class="city-hero-tagline">${it.cityTagline||it.summary||'당신만을 위한 발견의 여정'}</div>
         <div class="city-hero-meta">
           ${cpl ? `<span class="city-meta-chip">👤 ${cpl}</span>` : ''}

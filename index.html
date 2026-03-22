@@ -9,6 +9,95 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- ── 수제 아이콘 스프라이트 (인라인 SVG) ── -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" id="icon-sprite">
+  <symbol id="ic-compass" viewBox="0 0 56 56" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 5.5 C39.8 5.2 50.5 14.2 50.6 28 C50.7 41.6 40.1 51 28 50.8 C15.9 50.6 5.4 41 5.5 28 C5.6 14.8 16.2 5.8 28 5.5 Z" stroke="currentColor" stroke-width="1.6"/>
+    <path d="M28 13 C36.2 13 43 19.8 43 28 C43 36.2 36.2 43 28 43 C19.8 43 13 36.2 13 28 C13 19.8 19.8 13 28 13 Z" stroke="currentColor" stroke-width="0.7" stroke-dasharray="1.5 3.5" opacity="0.45"/>
+    <path d="M28 28 L25.2 17.5 L28 10 L30.8 17.5 Z" fill="currentColor" stroke="none"/>
+    <path d="M28 28 L30.8 38.5 L28 46 L25.2 38.5 Z" fill="currentColor" stroke="none" opacity="0.25"/>
+    <path d="M28 28 L42 25.5" stroke="currentColor" stroke-width="0.9" opacity="0.35"/>
+    <path d="M28 28 L14 30.5" stroke="currentColor" stroke-width="0.9" opacity="0.35"/>
+    <line x1="28" y1="7.5"  x2="28" y2="11.5"  stroke="currentColor" stroke-width="1.5"/>
+    <line x1="28" y1="44.5" x2="28" y2="48.5"  stroke="currentColor" stroke-width="1.0" opacity="0.5"/>
+    <line x1="7.5"  y1="28" x2="11.5" y2="28"  stroke="currentColor" stroke-width="1.0" opacity="0.5"/>
+    <line x1="44.5" y1="28" x2="48.5" y2="28"  stroke="currentColor" stroke-width="1.0" opacity="0.5"/>
+    <circle cx="28" cy="28" r="2.8" fill="currentColor"/>
+    <circle cx="28" cy="28" r="1.1" fill="white" opacity="0.7"/>
+    <path d="M25.8 9.2 L25.8 7 L28 9.2 L28 7" stroke="currentColor" stroke-width="0.9" opacity="0.7"/>
+  </symbol>
+  <symbol id="ic-zen" viewBox="0 0 56 56" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 9 C38.5 9 47 17.5 47 28 C47 38.8 38.4 47 28 47 C17.6 47 9 38.6 9 28 C9 18.2 16.2 10 25 9.2" stroke="currentColor" stroke-width="1.6" opacity="0.35"/>
+    <ellipse cx="28" cy="16.5" rx="4" ry="4.2" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M28 20.7 L28 24" stroke="currentColor" stroke-width="1.3"/>
+    <path d="M28 24 C26 24.5 22 26 20 27.5" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M28 24 C30 24.5 34 26 36 27.5" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M20 27.5 L18 31 L21 33" stroke="currentColor" stroke-width="1.3"/>
+    <path d="M36 27.5 L38 31 L35 33" stroke="currentColor" stroke-width="1.3"/>
+    <path d="M28 24 L25 34 C23 36 19 36.5 18 35" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M28 24 L31 34 C33 36 37 36.5 38 35" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M17 38 C20 40 24 40.5 28 40.5 C32 40.5 36 40 39 38" stroke="currentColor" stroke-width="1.2" opacity="0.55"/>
+    <path d="M21 33 C22 34.5 24 35 25 34" stroke="currentColor" stroke-width="1.1" opacity="0.7"/>
+    <path d="M35 33 C34 34.5 32 35 31 34" stroke="currentColor" stroke-width="1.1" opacity="0.7"/>
+  </symbol>
+  <symbol id="ic-leaf" viewBox="0 0 56 56" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 50 C28 44 27.5 38 26.5 32 C25.5 26 24 20 22 15" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M22 15 C18 14 12 12 9 8 C9 4 14 3 18 5 C22 7 25 11 26 15 C27 19 26.5 23 24 26 C23 27.5 21.5 28 20 27 C17 25 16 20 22 15 Z" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M9 8 C14 12 20 20 22 26" stroke="currentColor" stroke-width="0.9" opacity="0.55"/>
+    <path d="M12 10 C13 13 15 15 17 16" stroke="currentColor" stroke-width="0.7" opacity="0.45"/>
+    <path d="M16 7 C16 10 17 13 19 15" stroke="currentColor" stroke-width="0.7" opacity="0.45"/>
+    <path d="M26 32 C29 29 34 28 36 30 C37.5 32 36 36 33 37 C30 38 27 36 26 32 Z" stroke="currentColor" stroke-width="1.3"/>
+    <path d="M36 30 C33 32 29 34 26 32" stroke="currentColor" stroke-width="0.7" opacity="0.5"/>
+    <path d="M27.5 23 C24 21 21 22 21 25 C21 27 23 28 25 27 C27 26 28 24.5 27.5 23 Z" stroke="currentColor" stroke-width="1.2" opacity="0.75"/>
+    <path d="M24 50 C22 50 20 50.5 18 50" stroke="currentColor" stroke-width="1.0" opacity="0.35"/>
+  </symbol>
+  <symbol id="ic-explorer" viewBox="0 0 56 56" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="23" cy="10" rx="4.5" ry="4.8" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M17.5 7.5 L28.5 7.5" stroke="currentColor" stroke-width="2.0"/>
+    <path d="M20 7.5 C20 6 21.5 5 23 5 C24.5 5 26 6 26 7.5" stroke="currentColor" stroke-width="1.3"/>
+    <path d="M23 15 C22 18 21 22 20 27" stroke="currentColor" stroke-width="1.6"/>
+    <path d="M23 15 C26 14 30 15 32 18 C34 21 34 25 32 27 C30 29 27 29 25 28 C23 27 22 25 21 22" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M23 15 C24 17 25 20 25 28" stroke="currentColor" stroke-width="0.9" opacity="0.5" stroke-dasharray="2 2"/>
+    <path d="M22 19 C18 22 14 24 12 28" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M22 19 C25 18 28 18 30 20" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M20 27 C18 31 16 36 13 42" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M20 27 C22 31 24 35 26 40" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M13 42 C11 43 9 43 8 42" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M26 40 C27 42 29 43 31 42" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M35 13 C37 12 39 13 40 15" stroke="currentColor" stroke-width="1.0" opacity="0.35"/>
+    <path d="M36 19 C38 18.5 40 19.5 41 21" stroke="currentColor" stroke-width="0.8" opacity="0.25"/>
+  </symbol>
+  <symbol id="ic-flaneur" viewBox="0 0 56 56" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="26" cy="10" rx="4.2" ry="4.5" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M21.5 7.5 L30.5 7.5" stroke="currentColor" stroke-width="2.2"/>
+    <path d="M22.5 7.5 C22.5 5.5 24 4.5 26 4.5 C28 4.5 29.5 5.5 29.5 7.5" stroke="currentColor" stroke-width="1.3"/>
+    <path d="M26 14.5 C25.5 19 25 24 25 30" stroke="currentColor" stroke-width="1.6"/>
+    <path d="M25.5 20 C28 21 30 23 31 26 C32 29 32 32 31 35" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M31 35 C32 38 33 42 33 46" stroke="currentColor" stroke-width="1.3"/>
+    <path d="M33 46 C33 48 35 49 37 48 C38 47.5 38 46 37 45.5" stroke="currentColor" stroke-width="1.2"/>
+    <path d="M25.5 20 C23 21 21 24 20 28" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M20 28 C20 30 21 31 23 30" stroke="currentColor" stroke-width="1.2" opacity="0.65"/>
+    <path d="M25 30 C24 34 22 38 20 44" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M25 30 C26 34 27 38 28 44" stroke="currentColor" stroke-width="1.4"/>
+    <path d="M20 44 C18 45.5 15 45.5 14 44.5" stroke="currentColor" stroke-width="1.8"/>
+    <path d="M28 44 C30 45.5 33 45.5 34 44.5" stroke="currentColor" stroke-width="1.6"/>
+  </symbol>
+  <symbol id="ic-map" viewBox="0 0 56 56" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 14 L20 11 L36 15 L47 12 L47 44 L36 47 L20 43 L9 46 Z" stroke="currentColor" stroke-width="1.5"/>
+    <path d="M20 11 L20 43" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 3" opacity="0.5"/>
+    <path d="M36 15 L36 47" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 3" opacity="0.5"/>
+    <path d="M14 28 C16 23 20 21 24 24 C28 27 30 30 34 28 C37 26.5 40 28 42 33" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2.5 2.5"/>
+    <circle cx="14" cy="28" r="2.5" stroke="currentColor" stroke-width="1.3"/>
+    <circle cx="14" cy="28" r="1" fill="currentColor"/>
+    <path d="M42 33 C42 29 46 29 46 33 C46 36.5 42 41 42 41 C42 41 38 36.5 38 33 C38 29 42 29 42 33 Z" stroke="currentColor" stroke-width="1.3"/>
+    <circle cx="42" cy="33" r="1.8" fill="currentColor"/>
+    <path d="M23 37 L27 30 L32 37" stroke="currentColor" stroke-width="1.0" opacity="0.35"/>
+    <path d="M13 35 C15 33.5 17 35 19 33.5" stroke="currentColor" stroke-width="0.9" opacity="0.4"/>
+    <path d="M13 38 C15 36.5 17 38 19 36.5" stroke="currentColor" stroke-width="0.9" opacity="0.4"/>
+  </symbol>
+</svg>
+
 <div id="vBackground"></div>
 <div id="vFog"></div>
 <div id="vDNA"><div class="v-dna-core"></div></div>

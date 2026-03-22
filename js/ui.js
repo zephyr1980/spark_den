@@ -54,7 +54,7 @@ const UI = {
     if (!mapData) return `
       <div class="minimap-placeholder">
         <div style="font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:2px;color:var(--terra-light);margin-bottom:.5rem;text-transform:uppercase">리얼 인터랙티브 맵</div>
-        <div style="font-size:2rem;opacity:.3;margin-bottom:.6rem">🗺️</div>
+        <svg class="ic-map-lg" aria-hidden="true"><use href="#ic-map"/></svg>
         <div class="minimap-placeholder-text">${cityKey} 맵은 곧 추가됩니다.<br><span style="font-size:.7rem;opacity:.6">현재 포르투 · 교토 상세맵 추가됨</span></div>
       </div>`;
 
