@@ -397,9 +397,16 @@ const UI = {
    4. APP — 화면 전환 · 흐름 제어 · API
 ════════════════════════════════════════════ */
 const App = {
+  init() {
+    // Initialization logic for App
+  },
 
   /* ── 화면 ── */
   showScreen(id, scroll = false) {
+    if (this._calOutsideHandlerBound) {
+      document.removeEventListener('click', this._calOutsideHandlerBound);
+      this._calOutsideHandlerBound = null;
+    }
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active', 'active-scroll'));
     document.getElementById(id).classList.add(scroll ? 'active-scroll' : 'active');
     window.scrollTo(0, 0);
@@ -1130,99 +1137,14 @@ const App = {
     }
     
     // ── 도시 데이터 백그라운드 Fetch ──
-    const cityMap = { '포르투': 'porto', '교토': 'kyoto', '파리': 'paris', '런던': 'london', '뉴욕': 'new_york', '로마': 'rome', '바르셀로나': 'barcelona', '도쿄': 'tokyo', '방콕': 'bangkok', '시드니': 'sydney', '프라하': 'prague', '부다페스트': 'budapest', '비엔나': 'vienna', '베를린': 'berlin', '암스테르담': 'amsterdam', '리스본': 'lisbon', '타이베이': 'taipei', '오사카': 'osaka', '삿포로': 'sapporo', '싱가포르': 'singapore', '싱가폴': 'singapore', '홍콩': 'hong_kong', '다낭': 'da_nang', '코타키나발루': 'kota_kinabalu', '발리': 'bali', '치앙마이': 'chiang_mai', '상하이': 'shanghai', '이스탄불': 'istanbul', '두바이': 'dubai', '시애틀': 'seattle', '샌프란시스코': 'san_francisco', '하와이': 'hawaii', '모로코': 'morocco' };
-    
-    // 로컬 환경(file://)에서의 fetch 제한을 고려한 주요 도시 데이터 내장
-    const CITY_FALLBACKS = {
-      'new_york': {
-        "description": "세계 최고의 대도시 뉴욕. 타임스퀘어에서 자유의 여신상까지, 잠들지 않는 도시의 에너지를 느껴보세요.",
-        "senses": { "sight": "타임스퀘어의 압도적인 전광판 야경", "sound": "엘로우 캡의 경적 소리와 거리의 활기", "smell": "첼시 마켓의 갓 구운 베이글 향기" },
-        "map": { "lat": 40.7128, "lng": -74.0060, "zoom": 12, "legend": [{"c":"#C4704B","l":"주요 명소"}], "pins": [
-          {"lat":40.7851, "lng":-73.9683, "name":"센트럴 파크", "time":"오전 10시", "note":"맨해튼 중심의 거대한 녹지 공원"},
-          {"lat":40.7580, "lng":-73.9855, "name":"타임스퀘어", "time":"오후 8시", "note":"뉴욕의 심장부, 화려한 전광판의 향연"},
-          {"lat":40.7426, "lng":-74.0057, "name":"첼시 마켓", "time":"오후 12시", "note":"오래된 공장을 개조한 미식의 성지"},
-          {"lat":40.7061, "lng":-73.9969, "name":"브루클린 브릿지", "time":"오후 5시", "note":"뉴욕 스카이라인을 감상하며 걷는 다리"},
-          {"lat":40.7614, "lng":-73.9776, "name":"MoMA(현대미술관)", "time":"오전 11시", "note":"고흐, 피카소 등 거장들의 명작이 가득한 곳"},
-          {"lat":40.7484, "lng":-73.9857, "name":"엠파이어 스테이트 빌딩", "time":"오후 9시", "note":"뉴욕의 영원한 상징, 화려한 전망대"}
-        ] }
-      },
-      'porto': {
-        "description": "도루강 언덕 위 오렌지빛 지붕이 아름다운 포르투갈의 낭만 도시.",
-        "senses": { "sight": "도루강과 루이스 1세 다리의 풍경", "sound": "강변 버스킹의 멜로디", "smell": "오래된 와인 창고의 포트와인 향" },
-        "map": { "lat": 41.1496, "lng": -8.6109, "zoom": 13, "legend": [{"c":"#C4704B","l":"명소"}], "pins": [
-          {"lat":41.1408, "lng":-8.6137, "name":"리베이라 지구", "time":"오후 5시", "note":"강변의 정취가 가득한 포르투의 심장"},
-          {"lat":41.1456, "lng":-8.6147, "name":"상 벤투 역", "time":"오전 10시", "note":"아줄레주 타일 벽화가 아름다운 기차역"},
-          {"lat":41.1465, "lng":-8.6148, "name":"렐루 서점", "time":"오후 2시", "note":"해리포터의 영감을 준 세계에서 가장 아름다운 서점"},
-          {"lat":41.1408, "lng":-8.6137, "name":"동 루이스 1세 다리", "time":"오후 6시", "note":"도루강의 일몰을 감상하기 가장 좋은 명소"},
-          {"lat":41.1499, "lng":-8.6101, "name":"클레리구스 탑", "time":"오전 11시", "note":"포르투 시내 전경을 한눈에 담을 수 있는 전망대"}
-        ] }
-      },
-      'paris': {
-        "description": "예술과 낭만의 도시 파리. 에펠탑에서 루브르 박물관까지, 역사가 살아 숨쉬는 거리를 걸어보세요.",
-        "senses": { "sight": "노란 조명을 밝힌 세느강과 에펠탑의 실루엣", "sound": "카페 테라스의 활기찬 대화 소리", "smell": "아침 일찍 문을 연 불랑제리의 고소한 바게트 향" },
-        "map": { "lat": 48.8566, "lng": 2.3522, "zoom": 12, "legend": [{"c":"#C4704B","l":"명소"}], "pins": [
-          {"lat":48.8584, "lng":2.2945, "name":"에펠탑", "time":"오후 8시", "note":"파리의 상징적인 랜드마크 야경 감상"},
-          {"lat":48.8606, "lng":2.3376, "name":"루브르 박물관", "time":"오전 9시", "note":"모나리자 등 수천 점의 걸작이 있는 박물관"},
-          {"lat":48.8867, "lng":2.3431, "name":"몽마르트르 언덕", "time":"오후 4시", "note":"파리 시내를 내려다보는 예술가들의 거리"}
-        ] }
-      },
-      'london': {
-        "description": "전통과 현대가 공존하는 런던. 템즈강을 따라 걷는 역사 산책과 세련된 마켓들을 경험하세요.",
-        "senses": { "sight": "런던 아이에서 내려다보는 템즈강의 스카이라인", "sound": "빅 벤의 웅장한 종소리", "smell": "보로 마켓의 풍성한 음식 냄새" },
-        "map": { "lat": 51.5074, "lng": -0.1278, "zoom": 12, "legend": [{"c":"#C4704B","l":"명소"}], "pins": [
-          {"lat":51.5007, "lng":-0.1246, "name":"빅 벤", "time":"오전 10시", "note":"영국 국회의사당의 상징적인 시계탑"},
-          {"lat":51.5033, "lng":-0.1195, "name":"런던 아이", "time":"오후 7시", "note":"보름달처럼 런던을 비추는 거행 관람차"},
-          {"lat":51.5081, "lng":-0.0759, "name":"타워 브릿지", "time":"오후 3시", "note":"템즈강의 품격을 더하는 개폐식 도개교"}
-        ] }
-      },
-      'kyoto': {
-        "description": "천년의 역사를 간직한 교토. 붉은 도리이 길과 조용한 사찰에서 일본의 정수를 만나보세요.",
-        "senses": { "sight": "후시미 이나리의 끝없는 붉은 도리이", "sound": "대나무 숲을 흔드는 바람 소리", "smell": "갓 우려낸 말차의 쌉싸름한 향" },
-        "map": { "lat": 35.0116, "lng": 135.7681, "zoom": 12, "legend": [{"c":"#C4704B","l":"명소"}], "pins": [
-          {"lat":34.9671, "lng":135.7727, "name":"후시미 이나리 대사", "time":"오전 9시", "note":"수천 개의 도리이가 장관을 이루는 산책로"},
-          {"lat":35.0394, "lng":135.7292, "name":"금각사(킨카쿠지)", "time":"오후 1시", "note":"연못 위에 빛나는 화려한 황금 빛 사찰"},
-          {"lat":34.9949, "lng":135.7850, "name":"기요미즈데라(청수사)", "time":"오후 4시", "note":"교토 시내가 한눈에 내려다보이는 절벽 위 사찰"}
-        ] }
-      },
-      'barcelona': {
-        "description": "가우디의 예술이 살아있는 바르셀로나. 지중해의 햇살과 화려한 건축미를 즐겨보세요.",
-        "senses": { "sight": "사그라다 파밀리아의 압도적인 스테인드글라스", "sound": "람블라스 거리의 활기찬 버스킹", "smell": "보케리아 시장의 신선한 하몬과 과일 향" },
-        "map": { "lat": 41.3851, "lng": 2.1734, "zoom": 13, "legend": [{"c":"#C4704B","l":"명소"}], "pins": [
-          {"lat":41.4036, "lng":2.1744, "name":"사그라다 파밀리아", "time":"오전 10시", "note":"가우디 최후의 걸작, 경이로운 성당"},
-          {"lat":41.4145, "lng":2.1527, "name":"구엘 공원", "time":"오후 3시", "note":"동화 속 세상 같은 가우디의 공원"},
-          {"lat":41.4034, "lng":2.1648, "name":"카사 바트요", "time":"오전 11시", "note":"뼈의 집이라 불리는 독창적인 가우디 건축물"}
-        ] }
-      },
-      'tokyo': {
-        "description": "과거와 미래가 공존하는 거대 도시 도쿄. 화려한 네온사인과 조용한 신사를 동시에 경험해 보세요.",
-        "senses": { "sight": "시부야 스크램블 교차로의 압도적인 인파", "sound": "지하철의 정교한 안내 방송과 도시 소음", "smell": "골목길 야키토리 식당에서 풍기는 고소한 연기 향" },
-        "map": { "lat": 35.6895, "lng": 139.6917, "zoom": 12, "legend": [{"c":"#C4704B","l":"명소"}], "pins": [
-          {"lat":35.6585, "lng":139.7013, "name":"시부야 스크램블 교차로", "time":"오후 6시", "note":"도쿄의 활기를 가장 잘 느낄 수 있는 세계 최대의 교차로"},
-          {"lat":35.7148, "lng":139.7967, "name":"아사쿠사 센소지", "time":"오전 10시", "note":"도쿄에서 가장 오래된 절, 에도시대의 정취"},
-          {"lat":35.6586, "lng":139.7454, "name":"도쿄 타워", "time":"오후 8시", "note":"도시의 야경을 감상할 수 있는 랜드마크"}
-        ] }
-      },
-      'bangkok': {
-        "description": "천사들의 도시 방콕. 화려한 왕궁과 활기 넘치는 시장, 맛있는 길거리 음식의 천국입니다.",
-        "senses": { "sight": "짜오프라야 강변에 빛나는 왓 아룬의 야경", "sound": "툭툭이의 엔진 소리와 분주한 시장통", "smell": "코코넛 밀크와 향긋한 고수 맛이 어우러진 똠얌꿍 향" },
-        "map": { "lat": 13.7563, "lng": 100.5018, "zoom": 13, "legend": [{"c":"#C4704B","l":"명소"}], "pins": [
-          {"lat":13.7513, "lng":100.4927, "name":"방콕 왕궁", "time":"오전 9시", "note":"태국 왕실의 화려함과 정교한 사찰 건축의 정수"},
-          {"lat":13.7437, "lng":100.4918, "name":"왓 아룬(새벽 사원)", "time":"오후 6시", "note":"강변에 우뚝 솟은 아름다운 도자기 탑"},
-          {"lat":13.7460, "lng":100.5348, "name":"시암 스퀘어", "time":"오후 2시", "note":"방콕의 트렌드를 한눈에 볼 수 있는 쇼핑과 문화의 중심지"}
-        ] }
-      }
-    };
-
-    // normCity/mappedId는 함수 상단(라인 1071-1072)에서 이미 선언됨
-    // 두 번째 선언 제거 후 기존 값 재사용
     if (mappedId) {
       if (AppState.cityData) {
         // prefetchCityData에서 이미 로드됨 — 재fetch 스킵
         console.log(`City data already cached for ${mappedId}, skipping fetch`);
       } else {
         // 1. 우선 내장 데이터 확인
-        if (CITY_FALLBACKS[mappedId]) {
-          AppState.cityData = CITY_FALLBACKS[mappedId];
+        if (CONFIG.CITY_FALLBACKS[mappedId]) {
+          AppState.cityData = CONFIG.CITY_FALLBACKS[mappedId];
           console.log(`Using fallback data for ${mappedId}`);
         }
         // 2. 외부 JSON Fetch 시도
@@ -1235,66 +1157,10 @@ const App = {
       AppState.cityData = null;
     }
 
-    const citySpots = AppState.cityData?.map?.pins 
-      ? `\n[추천 장소 리스트]\n${AppState.cityData.map.pins.map(p => `- ${p.name}: ${p.note}`).join('\n')}`
-      : '';
-
-    const cityContext = AppState.cityData 
-      ? `\n[도시 배경 정보]\n분위기: ${AppState.cityData.description}\n주요 감각: 시각(${AppState.cityData.senses?.sight||''}), 청각(${AppState.cityData.senses?.sound||''}), 후각(${AppState.cityData.senses?.smell||''})${citySpots}`
-      : '';
-
-    const costLevel = CONFIG.CITY_COSTS[mappedId] || 3;
-    const levelMap = { 1: '매우 저렴', 2: '저렴', 3: '보통', 4: '비쌈', 5: '매우 비쌈' };
-    const costHint = `이 도시의 물가 수준은 5점 만점에 ${costLevel}점(${levelMap[costLevel]}) 입니다.`;
-
-    const prompt = `여행 일정 전문가. JSON만 출력. 설명 없이 JSON만. ${cityContext}
-여행자:${p?.typeName||''}의 성향 반영. 기피(제외):${neg.join(',')||'없음'}
-여행지:${city} / 출발일:${dateStr} / 기간:${dur}일 / 요청:${wish||'없음'} / 물가:${costHint}
-규칙: 하루 3~4개 spot(오전·점심·오후·저녁), 실제 현지 상호명(한국어), note에 주소·가격·팁 포함, mapFocus 1문장.
-{"destination":"","title":"","summary":"","palette":["#hex1","#hex2","#hex3"],"cityTagline":"","heroEmoji":"","mapFocus":"","budgetPerDay":{"food":0,"transport":0,"entrance":0},"days":[{"day":1,"title":"","desc":"","spots":[{"time":"09:00","name":"","note":"","sense":"","tags":[],"cost":0}]}],"tips":""}`;
+    const prompt = this._buildItineraryPrompt(city, dur, dateStr, wish, mappedId, p, neg);
 
     try {
-      // ── 스트리밍 호출 ──
-      const res = await fetch('/api/anthropic', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          model: 'claude-3-5-haiku-20241022',
-          max_tokens: 3000,
-          stream: true,
-          messages: [{role:'user', content: prompt}]
-        })
-      });
-
-      if (!res.ok) throw new Error(`API ${res.status}`);
-
-      let buffer = '';
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-
-      // SSE 파싱 루프
-      while (true) {
-        const {done, value} = await reader.read();
-        if (done) break;
-
-        const chunk = decoder.decode(value, {stream: true});
-        for (const line of chunk.split('\n')) {
-          if (!line.startsWith('data: ')) continue;
-          const data = line.slice(6).trim();
-          if (data === '[DONE]') break;
-          try {
-            const evt = JSON.parse(data);
-            if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
-              buffer += evt.delta.text;
-              this._updateStreamProgress(buffer); // 실시간 진행 표시
-            }
-          } catch { /* 불완전 JSON 청크 무시 */ }
-        }
-      }
-
-      // 완성된 JSON 파싱 및 렌더링
-      const clean = buffer.replace(/```json|```/g, '').trim();
-      const it = JSON.parse(clean);
+      const it = await this._fetchItineraryStream(prompt);
       
       // 캐시에 저장 (속도 최적화)
       localStorage.setItem(cacheKey, JSON.stringify(it));
@@ -1308,18 +1174,80 @@ const App = {
     }
   },
 
+  _buildItineraryPrompt(city, dur, dateStr, wish, mappedId, p, neg) {
+    const citySpots = AppState.cityData?.map?.pins 
+      ? `\n[추천 장소 리스트]\n${AppState.cityData.map.pins.map(sp => `- ${sp.name}: ${sp.note}`).join('\n')}`
+      : '';
+
+    const cityContext = AppState.cityData 
+      ? `\n[도시 배경 정보]\n분위기: ${AppState.cityData.description}\n주요 감각: 시각(${AppState.cityData.senses?.sight||''}), 청각(${AppState.cityData.senses?.sound||''}), 후각(${AppState.cityData.senses?.smell||''})${citySpots}`
+      : '';
+
+    const costLevel = CONFIG.CITY_COSTS[mappedId] || 3;
+    const levelMap = { 1: '매우 저렴', 2: '저렴', 3: '보통', 4: '비쌈', 5: '매우 비쌈' };
+    const costHint = `이 도시의 물가 수준은 5점 만점에 ${costLevel}점(${levelMap[costLevel]}) 입니다.`;
+
+    return `여행 일정 전문가. JSON만 출력. 설명 없이 JSON만. ${cityContext}
+여행자:${p?.typeName||''}의 성향 반영. 기피(제외):${neg.join(',')||'없음'}
+여행지:${city} / 출발일:${dateStr} / 기간:${dur}일 / 요청:${wish||'없음'} / 물가:${costHint}
+규칙: 하루 3~4개 spot(오전·점심·오후·저녁), 실제 현지 상호명(한국어), note에 주소·가격·팁 포함, mapFocus 1문장.
+{"destination":"","title":"","summary":"","palette":["#hex1","#hex2","#hex3"],"cityTagline":"","heroEmoji":"","mapFocus":"","budgetPerDay":{"food":0,"transport":0,"entrance":0},"days":[{"day":1,"title":"","desc":"","spots":[{"time":"09:00","name":"","note":"","sense":"","tags":[],"cost":0}]}],"tips":""}`;
+  },
+
+  async _fetchItineraryStream(prompt) {
+    const res = await fetch('/api/anthropic', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-3-5-haiku-20241022',
+        max_tokens: 3000,
+        stream: true,
+        messages: [{role:'user', content: prompt}]
+      })
+    });
+
+    if (!res.ok) throw new Error(`API ${res.status}`);
+
+    let buffer = '';
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+
+    // Cache elements to prevent querying on every chunk
+    const subEl = document.getElementById('ldSub');
+    const progEl = document.getElementById('ldDetailMsg');
+
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, {stream: true});
+      for (const line of chunk.split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') break;
+        try {
+          const evt = JSON.parse(data);
+          if (evt.type === 'content_block_delta' && evt.delta?.type === 'text_delta') {
+            buffer += evt.delta.text;
+            this._updateStreamProgress(buffer, subEl, progEl);
+          }
+        } catch { /* ignore incomplete chunks */ }
+      }
+    }
+    const clean = buffer.replace(/```json|```/g, '').trim();
+    return JSON.parse(clean);
+  },
+
   // 스트리밍 중 Day 개수를 감지해 로딩 메시지를 업데이트
-  _updateStreamProgress(buf) {
+  _updateStreamProgress(buf, subEl, progEl) {
     const days = (buf.match(/"day"\s*:/g) || []).length;
-    const sub = document.getElementById('ldSub');
-    const prog = document.getElementById('ldDetailMsg');
     
-    if (sub) {
-      if (days > 0) sub.textContent = `Day ${days} 일정을 상세 설계 중...`;
-      else sub.textContent = `기본 동선을 구성하는 중...`;
+    if (subEl) {
+      if (days > 0) subEl.textContent = `Day ${days} 일정을 상세 설계 중...`;
+      else subEl.textContent = `기본 동선을 구성하는 중...`;
     }
 
-    if (prog) {
+    if (progEl) {
       const stepCount = Math.floor(buf.length / 400); 
       const steps = [
         "취향 포인트 분석 중...",
