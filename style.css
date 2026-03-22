@@ -195,7 +195,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--ink);color:var(--cre
 .tc-section-title { font-family: 'JetBrains Mono', monospace; font-size: 0.55rem; letter-spacing: 1px; color: rgba(245,240,232,0.4); text-transform: uppercase; margin-bottom: 0.6rem; border-bottom: 1px solid rgba(245,240,232,0.06); padding-bottom: 0.3rem; }
 
 .tc-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.tc-tag { background: rgba(245, 240, 232, 0.05); border: 1px solid rgba(245, 240, 232, 0.08); padding: 0.3rem 0.7rem; border-radius: 12px; font-size: 0.7rem; color: var(--ink-faint); transition: all 0.3s; }
+.tc-tag { background: rgba(245, 240, 232, 0.05); border: 1px solid rgba(245, 240, 232, 0.08); padding: 0.32rem 0.8rem; border-radius: 12px; font-size: 0.8rem; color: var(--ink-faint); transition: all 0.3s; }
 .tc-tag:hover { border-color: var(--terra-light); color: var(--cream); }
 
 .tc-dims { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
