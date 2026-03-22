@@ -696,3 +696,34 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
 }
 .pmb-hint { font-size: .62rem; text-align: right; }
 .pmb-legend { font-size: .63rem; color: var(--ink-faint); margin-top: .75rem; text-align: right; opacity: .7; }
+
+/* ── 매칭 뱃지 5단계 ── */
+.match-badge.match-perfect {
+  background: linear-gradient(135deg, #7B6CF0, #A084E8);
+  color: #fff;
+  box-shadow: 0 0 8px rgba(123,108,240,.45);
+}
+.match-badge.match-top {
+  background: linear-gradient(135deg, #C4704B, #E0936A);
+  color: #fff;
+}
+.match-badge.match-good {
+  background: linear-gradient(135deg, #7A9A7E, #9EC4A2);
+  color: #fff;
+}
+.match-badge.match-ok {
+  background: rgba(160,150,130,.18);
+  color: var(--ink-mid);
+  border: 1px solid rgba(160,150,130,.35);
+}
+.match-badge.match-low {
+  background: rgba(180,120,100,.10);
+  color: var(--ink-faint);
+  border: 1px dashed rgba(180,120,100,.30);
+}
+
+/* 완벽 일치 chip 강조 테두리 */
+.city-chip.has-match.match-perfect-chip {
+  border-color: rgba(123,108,240,.5);
+  box-shadow: 0 0 10px rgba(123,108,240,.2);
+}

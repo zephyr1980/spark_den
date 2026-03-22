@@ -4,16 +4,24 @@
 Object.assign(App, {
 
   /* ── 취향-도시 매칭 점수 계산 (0~100) ── */
+  /* 알고리즘: 취향값이 중앙(50)에서 멀수록 해당 차원 가중치 증가
+     weight = (|pScore - 50| / 50) * 1.5 + 0.5  → 범위 0.5 ~ 2.0
+     극단적 취향(0 또는 100)은 해당 차원을 2배 반영,
+     중립(50)은 0.5배 반영 → 도시간 구분력 극대화 */
   _calcMatchScore(profile, cityId) {
     const dims = CONFIG.CITY_DIMENSIONS[cityId];
     if (!dims || !profile?.dimensions) return null;
     const keys = ['crowd', 'explore', 'pace', 'immersion'];
-    const total = keys.reduce((sum, k) => {
+
+    let weightedDiff = 0, weightedMax = 0;
+    keys.forEach(k => {
       const pScore = profile.dimensions[k]?.score ?? 50;
       const cScore = dims[k] ?? 50;
-      return sum + Math.abs(pScore - cScore);
-    }, 0);
-    return Math.round(100 - (total / (keys.length * 100)) * 100);
+      const weight = (Math.abs(pScore - 50) / 50) * 1.5 + 0.5; // 0.5 ~ 2.0
+      weightedDiff += Math.abs(pScore - cScore) * weight;
+      weightedMax  += 100 * weight;
+    });
+    return Math.round(100 - (weightedDiff / weightedMax) * 100);
   },
 
   /* ── 매칭 점수 기준 도시 정렬 ── */
@@ -28,13 +36,15 @@ Object.assign(App, {
     });
   },
 
-  /* ── 매칭 점수 → 뱃지 레벨 ── */
+  /* ── 매칭 점수 → 뱃지 레벨 (5단계) ── */
   _matchLevel(score) {
     if (score === null) return null;
-    if (score >= 70) return { cls: 'match-top',  label: '최고 일치' };
-    if (score >= 50) return { cls: 'match-good', label: '잘 맞아요' };
-    if (score >= 40) return { cls: 'match-ok',   label: '무난해요' };
-    return null; // 40 미만은 뱃지 없음
+    if (score >= 78) return { cls: 'match-perfect', label: '완벽 일치' };
+    if (score >= 65) return { cls: 'match-top',     label: '최고 일치' };
+    if (score >= 52) return { cls: 'match-good',    label: '잘 맞아요' };
+    if (score >= 40) return { cls: 'match-ok',      label: '무난해요'  };
+    if (score >= 28) return { cls: 'match-low',     label: '아쉬워요'  };
+    return null; // 28 미만은 뱃지 없음
   },
 
   _renderPlanScreen() {
@@ -52,7 +62,8 @@ Object.assign(App, {
           const score  = this._calcMatchScore(p, cityId);
           const level  = this._matchLevel(score);
           const badge  = level ? `<span class="match-badge ${level.cls}">${level.label}</span>` : '';
-          return `<div class="city-chip${level ? ' has-match' : ''}" onclick="App.pickCity(this,'${c}')" data-city-id="${cityId || ''}" data-match="${score ?? ''}">
+          const perfectCls = level?.cls === 'match-perfect' ? ' match-perfect-chip' : '';
+          return `<div class="city-chip${level ? ' has-match' : ''}${perfectCls}" onclick="App.pickCity(this,'${c}')" data-city-id="${cityId || ''}" data-match="${score ?? ''}">
             ${badge}<span class="city-name">${c}</span>
           </div>`;
         }).join('')}
