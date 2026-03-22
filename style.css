@@ -527,22 +527,27 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
 
 /* ── REVEAL EFFECTS ── */
 .v-reveal {
-  animation: revealFlash 1.5s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  animation: revealFlash 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
 
+/* 피크 밝기를 5→1.6으로 낮추고, 블러를 4px로 줄여
+   눈부심 없이 부드럽게 등장하도록 조정 */
 @keyframes revealFlash {
-  0% { filter: brightness(3) blur(10px); opacity: 0; transform: scale(0.5) translate(-50%, -50%); }
-  30% { filter: brightness(5) blur(0); opacity: 1; transform: scale(1.2) translate(-50%, -50%); }
-  100% { filter: brightness(1) blur(0); opacity: 1; transform: scale(1) translate(-50%, -50%); }
+  0%   { filter: brightness(1.8) blur(4px); opacity: 0; transform: scale(0.9) translate(-50%, -50%); }
+  35%  { filter: brightness(1.6) blur(0);   opacity: 1; transform: scale(1.04) translate(-50%, -50%); }
+  100% { filter: brightness(1)   blur(0);   opacity: 1; transform: scale(1) translate(-50%, -50%); }
 }
 
+/* 배경은 어둡게 시작 → 정상(1.0)으로만 복귀
+   brightness > 1 로 끝내지 않아 카드 가독성 유지 */
 .bg-bright {
-  animation: bgBright 1.5s ease forwards;
+  animation: bgBright 1.8s ease forwards;
 }
 
 @keyframes bgBright {
-  0% { filter: brightness(0.5); }
-  100% { filter: brightness(1.2) contrast(1.1); }
+  0%   { filter: brightness(0.4) saturate(0.6); }
+  60%  { filter: brightness(0.9) saturate(1.1); }
+  100% { filter: brightness(1.0) saturate(1.0); }
 }
 
 /* ── PRESETS ── */
