@@ -609,3 +609,90 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
   opacity: 1;
   transform: translateX(0);
 }
+
+/* ════════════════════════════════════════════
+   취향-도시 매칭 UI
+════════════════════════════════════════════ */
+
+/* 도시 칩 — 뱃지 포함 레이아웃 */
+.city-chip {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: .45rem .8rem;
+}
+.city-chip .city-name { font-size: .82rem; }
+.city-chip.has-match  { border-color: rgba(245,240,232,.18); }
+
+/* 매칭 뱃지 */
+.match-badge {
+  display: inline-block;
+  font-size: .55rem;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .5px;
+  padding: .1rem .45rem;
+  border-radius: 10px;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.match-badge.match-top  { background: rgba(196,112,75,.22); color: var(--terra-light); border: 1px solid rgba(196,112,75,.4); }
+.match-badge.match-good { background: rgba(122,154,126,.18); color: var(--sage);        border: 1px solid rgba(122,154,126,.35); }
+.match-badge.match-ok   { background: rgba(196,168,75,.14);  color: var(--gold);        border: 1px solid rgba(196,168,75,.3); }
+
+/* 선택된 도시 칩 강조 */
+.city-chip.has-match.sel { border-color: var(--terra); box-shadow: 0 0 12px rgba(196,112,75,.25); }
+
+/* 미리보기 — 매칭 섹션 */
+.preview-match {
+  margin: 1rem 0 .6rem;
+  padding: 1rem 1.1rem;
+  background: rgba(245,240,232,.04);
+  border: 1px solid rgba(245,240,232,.1);
+  border-radius: 10px;
+}
+.preview-match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .85rem;
+}
+.preview-match-label { font-size: .72rem; color: var(--ink-faint); letter-spacing: .5px; }
+.preview-match-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  font-weight: 600;
+}
+.preview-match-score.match-top  { color: var(--terra-light); }
+.preview-match-score.match-good { color: var(--sage); }
+.preview-match-score.match-ok   { color: var(--gold); }
+
+/* 차원 비교 바 */
+.preview-match-bars { display: flex; flex-direction: column; gap: .65rem; }
+.pmb-row { display: grid; grid-template-columns: 6.5rem 1fr 3.5rem; align-items: center; gap: .6rem; }
+.pmb-label { font-size: .68rem; color: var(--ink-faint); }
+.pmb-track {
+  position: relative;
+  height: 5px;
+  background: rgba(245,240,232,.08);
+  border-radius: 4px;
+  overflow: visible;
+}
+.pmb-fill {
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  border-radius: 4px;
+  transition: width .6s ease;
+}
+.pmb-fill.pmb-city {
+  width: 6px !important;
+  height: 11px;
+  top: -3px;
+  border-radius: 2px;
+  transform: translateX(-3px);
+  transition: left .6s ease;
+}
+.pmb-hint { font-size: .62rem; text-align: right; }
+.pmb-legend { font-size: .63rem; color: var(--ink-faint); margin-top: .75rem; text-align: right; opacity: .7; }

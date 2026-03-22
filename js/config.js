@@ -263,5 +263,51 @@ const CONFIG = {
   ACC_PRIM_LABELS:  {purity:'위생 우선',comfort:'숙면 우선',sensory:'감각 우선'},
   CAT_NAMES:        {purity:'위생 · 청결',comfort:'숙면 · 편안함',sensory:'감각 · 프리미엄'},
   MONTH_NAMES: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
-  TAG_STYLES: {'혼잡도 낮음':'low-crowd','조용한':'low-crowd','한산':'low-crowd','로컬 추천':'local','현지인 추천':'local','숨겨진':'local','기피 요소 없음':'no-avoid','안전':'no-avoid','아침 추천':'timing','저녁 추천':'timing','최적 시간':'timing'}
+  TAG_STYLES: {'혼잡도 낮음':'low-crowd','조용한':'low-crowd','한산':'low-crowd','로컬 추천':'local','현지인 추천':'local','숨겨진':'local','기피 요소 없음':'no-avoid','안전':'no-avoid','아침 추천':'timing','저녁 추천':'timing','최적 시간':'timing'},
+
+  // ─── 도시별 취향 차원 점수 ───────────────────────────────────────────
+  // crowd    : 0=활기(lively)    ↔ 100=고요(quiet)
+  // explore  : 0=랜드마크         ↔ 100=뒷골목(local backstreets)
+  // pace     : 0=빼곡한 일정      ↔ 100=느린 여행
+  // immersion: 0=관광객 위주      ↔ 100=현지인 몰입
+  // 근거: 오버투어리즘 지수, 슬로트래블 리포트, 여행 리뷰 패턴 종합 (2024)
+  CITY_DIMENSIONS: {
+    // ── 유럽 ──────────────────────────────────────────────────────────
+    'paris':        { crowd: 20, explore: 50, pace: 35, immersion: 40 }, // 오버투어리즘 상위권, 몽마르트르 등 로컬도 공존
+    'london':       { crowd: 25, explore: 55, pace: 35, immersion: 45 }, // 넓은 도시, 다양한 동네 탐방 가능
+    'rome':         { crowd: 20, explore: 40, pace: 40, immersion: 35 }, // 랜드마크 집중도 매우 높음, 극심한 관광객
+    'barcelona':    { crowd: 20, explore: 55, pace: 45, immersion: 40 }, // 연간 3,200만 관광객, 그라시아 등 로컬 동네 공존
+    'berlin':       { crowd: 50, explore: 78, pace: 60, immersion: 72 }, // 분산된 도시, 로컬 문화 강함, 느린 라이프스타일
+    'amsterdam':    { crowd: 25, explore: 60, pace: 55, immersion: 42 }, // stay-away 캠페인, 운하 동네 로컬 느낌
+    'lisbon':       { crowd: 38, explore: 70, pace: 62, immersion: 62 }, // 알파마 골목 문화, 파두 감성
+    'porto':        { crowd: 52, explore: 80, pace: 72, immersion: 73 }, // 작은 도시, 도보 골목 탐방 최적
+    'prague':       { crowd: 28, explore: 55, pace: 50, immersion: 40 }, // 구시가 매우 붐빔, 비노흐라디 등 로컬 구역 존재
+    'budapest':     { crowd: 42, explore: 62, pace: 55, immersion: 57 }, // 덜 알려진 동네들, 루인 바 문화
+    'vienna':       { crowd: 42, explore: 55, pace: 62, immersion: 52 }, // 클래식·카페 문화, 여유로운 분위기
+    // ── 아시아 ────────────────────────────────────────────────────────
+    'kyoto':        { crowd: 38, explore: 65, pace: 70, immersion: 62 }, // 붐비지만 명상적 분위기, 오프비트 사원 다수
+    'tokyo':        { crowd: 28, explore: 52, pace: 22, immersion: 45 }, // 거대 도시, 에너지 넘침, 동네마다 개성 강함
+    'osaka':        { crowd: 35, explore: 65, pace: 38, immersion: 62 }, // 음식 문화 중심, 서민적 활기
+    'sapporo':      { crowd: 68, explore: 62, pace: 67, immersion: 65 }, // 홋카이도 거점, 상대적으로 한산
+    'taipei':       { crowd: 52, explore: 72, pace: 57, immersion: 72 }, // 야시장·로컬 문화 강함, 관광객 비교적 적음
+    'hong_kong':    { crowd: 28, explore: 55, pace: 22, immersion: 50 }, // 매우 빠른 도시, 골목 시장 문화
+    'singapore':    { crowd: 42, explore: 45, pace: 32, immersion: 38 }, // 효율·깔끔, 관광 인프라 집중
+    'bangkok':      { crowd: 35, explore: 62, pace: 40, immersion: 67 }, // 방대한 도시, 길거리 음식·로컬 골목 풍부
+    'chiang_mai':   { crowd: 65, explore: 70, pace: 72, immersion: 73 }, // 슬로트래블 성지, 명상·수련 분위기
+    'da_nang':      { crowd: 68, explore: 55, pace: 67, immersion: 62 }, // 해안 도시, 여유롭고 덜 붐빔
+    'kota_kinabalu':{ crowd: 75, explore: 65, pace: 70, immersion: 65 }, // 자연·아웃도어 중심, 관광 밀도 낮음
+    'bali':         { crowd: 35, explore: 58, pace: 55, immersion: 50 }, // 쿠타 매우 관광객화, 우붓 등 로컬 경험 가능
+    'shanghai':     { crowd: 30, explore: 57, pace: 28, immersion: 52 }, // 빠른 도시, 프렌치 콘세션 등 로컬 구역 공존
+    // ── 중동·아프리카 ─────────────────────────────────────────────────
+    'dubai':        { crowd: 38, explore: 22, pace: 28, immersion: 18 }, // 쇼핑몰·랜드마크 집중, 로컬 경험 제한적
+    'istanbul':     { crowd: 35, explore: 67, pace: 50, immersion: 62 }, // 구시가 붐빔, 카디쾨이 등 현지인 동네 매력적
+    'morocco':      { crowd: 50, explore: 77, pace: 55, immersion: 72 }, // 메디나 골목 탐방이 핵심 경험
+    // ── 오세아니아 ───────────────────────────────────────────────────
+    'sydney':       { crowd: 45, explore: 50, pace: 50, immersion: 50 }, // 균형 잡힌 도시, 해안·도심 공존
+    // ── 북미 ─────────────────────────────────────────────────────────
+    'new_york':     { crowd: 12, explore: 45, pace:  8, immersion: 33 }, // 세계에서 가장 에너지 넘치는 도시
+    'san_francisco':{ crowd: 48, explore: 62, pace: 47, immersion: 52 }, // 다채로운 동네, 상대적으로 여유
+    'seattle':      { crowd: 55, explore: 60, pace: 55, immersion: 55 }, // 덜 붐비는 미국 도시
+    'hawaii':       { crowd: 40, explore: 42, pace: 65, immersion: 38 }, // 자연 중심 여유, 관광 인프라 집중
+  }
 };
