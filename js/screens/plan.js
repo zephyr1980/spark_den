@@ -372,7 +372,7 @@ Object.assign(App, {
   /* ── 캐시 키 ── */
   _getItinCacheKey(city, dur, profile) {
     const dnaKey = profile ? profile.typeName : 'default';
-    return `itin_cache_${city}_${dur}_${dnaKey}`.replace(/\s+/g, '_');
+    return `itin_cache_v3_${city}_${dur}_${dnaKey}`.replace(/\s+/g, '_');
   }
 
 });
