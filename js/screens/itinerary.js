@@ -19,11 +19,8 @@ Object.assign(App, {
     const normCity = city.trim().normalize('NFC').toLowerCase();
     let mappedId = CONFIG.CITY_MAP[normCity] || Object.values(CONFIG.CITY_MAP).find(v => v === normCity) || null;
 
-    if (mappedId && !AppState.cityData) {
-      if (CONFIG.CITY_FALLBACKS[mappedId]) AppState.cityData = CONFIG.CITY_FALLBACKS[mappedId];
-    } else if (!mappedId) {
-      AppState.cityData = null;
-    }
+    // 도시가 바뀔 때마다 항상 해당 도시 데이터로 갱신 (이전 도시 데이터 유지 금지)
+    AppState.cityData = mappedId ? (CONFIG.CITY_FALLBACKS[mappedId] || null) : null;
 
     // 캐시 확인
     const cacheKey = this._getItinCacheKey(city, dur, p);
@@ -42,17 +39,12 @@ Object.assign(App, {
       this._calOutsideHandlerBound = null;
     }
 
-    // 도시 데이터 fetch
+    // 도시 JSON 파일 fetch (있으면 fallback 위에 덮어씀)
     if (mappedId) {
-      if (!AppState.cityData) {
-        if (CONFIG.CITY_FALLBACKS[mappedId]) AppState.cityData = CONFIG.CITY_FALLBACKS[mappedId];
-        try {
-          const dRes = await fetch(`taste/assets/cities/${mappedId}.json`);
-          if (dRes.ok) AppState.cityData = await dRes.json();
-        } catch(e) { /* fallback 유지 */ }
-      }
-    } else {
-      AppState.cityData = null;
+      try {
+        const dRes = await fetch(`taste/assets/cities/${mappedId}.json`);
+        if (dRes.ok) AppState.cityData = await dRes.json();
+      } catch(e) { /* CITY_FALLBACKS 유지 */ }
     }
 
     const prompt = this._buildItineraryPrompt(city, dur, dateStr, wish, mappedId, p, neg);
@@ -62,20 +54,39 @@ Object.assign(App, {
       localStorage.setItem(cacheKey, JSON.stringify(it));
       this.renderItinerary(it, city, dur, dateStr);
     } catch(e) {
-      console.error(e);
-      this.toast('AI 통신 지연으로 기본 맞춤 일정을 제공합니다 🥲');
+      const errMsg = e?.message || String(e) || '알 수 없는 오류';
+      console.error('[itinerary error]', errMsg);
+      const msg = errMsg.includes('401') || errMsg.includes('403')
+                    ? '❌ API 키 오류 — Vercel 환경변수 ANTHROPIC_API_KEY 확인'
+                : errMsg.includes('404')
+                    ? '❌ /api/anthropic 없음 — Vercel 배포 여부 확인'
+                : errMsg.includes('fetch') || errMsg.includes('Failed') || errMsg.includes('NetworkError')
+                    ? '❌ 서버 연결 실패 — Vercel 배포 후 사용 가능'
+                : errMsg.includes('JSON') || errMsg.includes('블록')
+                    ? '❌ 응답 파싱 실패 — 콘솔(F12)에서 상세 확인'
+                : `❌ 오류: ${errMsg.slice(0, 60)}`;
+      this.toast(msg, 5000);
       this._fallbackItinerary(city, dur, dateStr, mappedId);
     }
   },
 
   /* ── 일정 프롬프트 빌드 ── */
   _buildItineraryPrompt(city, dur, dateStr, wish, mappedId, p, neg) {
-    const citySpots = AppState.cityData?.map?.pins
-      ? `\n[추천 장소 리스트]\n${AppState.cityData.map.pins.map(sp => `- ${sp.name}: ${sp.note}`).join('\n')}`
+    const cd = AppState.cityData;
+    const citySpots = cd?.map?.pins
+      ? `\n[추천 장소 리스트]\n${cd.map.pins.map(sp => `- ${sp.name}: ${sp.note}`).join('\n')}`
       : '';
 
-    const cityContext = AppState.cityData
-      ? `\n[도시 배경 정보]\n분위기: ${AppState.cityData.description}\n주요 감각: 시각(${AppState.cityData.senses?.sight||''}), 청각(${AppState.cityData.senses?.sound||''}), 후각(${AppState.cityData.senses?.smell||''})${citySpots}`
+    // restaurants 데이터가 있으면 프롬프트에 실제 맛집 목록 포함
+    const restaurantHint = cd?.restaurants?.length
+      ? `\n[현지 검증 맛집 목록 — 식사 spot 선정 시 이 목록에서 우선 선택]\n` +
+        cd.restaurants.map(r =>
+          `- ${r.name} | 메뉴: ${r.menu.join(', ')} | 가격: ${r.price} | 예약: ${r.reservation} | ${r.location}`
+        ).join('\n')
+      : '';
+
+    const cityContext = cd
+      ? `\n[도시 배경 정보]\n분위기: ${cd.description}\n주요 감각: 시각(${cd.senses?.sight||''}), 청각(${cd.senses?.sound||''}), 후각(${cd.senses?.smell||''})${citySpots}${restaurantHint}`
       : '';
 
     const costLevel = CONFIG.CITY_COSTS[mappedId] || 3;
@@ -140,8 +151,14 @@ ${cityContext}
         } catch { /* incomplete chunk 무시 */ }
       }
     }
-    const clean = buffer.replace(/```json|```/g, '').trim();
-    return JSON.parse(clean);
+    // JSON 블록만 추출 — 앞뒤 설명 텍스트나 ```json 마크다운 무시
+    const start = buffer.indexOf('{');
+    const end   = buffer.lastIndexOf('}');
+    if (start === -1 || end === -1 || end <= start) {
+      throw new Error(`JSON 블록을 찾지 못했습니다. 응답 미리보기: ${buffer.slice(0, 200)}`);
+    }
+    const jsonStr = buffer.slice(start, end + 1);
+    return JSON.parse(jsonStr);
   },
 
   /* ── 스트리밍 진행 상태 업데이트 ── */
@@ -319,20 +336,51 @@ ${cityContext}
     const n = parseInt(dur), days = [];
     const makeSpot = (time, name, note, sense, tags, cost=0) => ({time, name, note, sense, tags, cost});
     const pins = cd?.map?.pins || [];
+    const rests = cd?.restaurants || [];
+
+    // restaurants 배열에서 점심/저녁용 식당을 순서대로 가져오는 헬퍼
+    let restIdx = 0;
+    const nextRest = (mealType, fallbackCost) => {
+      const pool = rests.length
+        ? rests.filter(r => r.meal_type === mealType || r.meal_type === 'any')
+        : [];
+      if (!pool.length && rests.length) pool.push(...rests); // 타입 구분 없이 전체 사용
+      if (!pool.length) return null;
+      const r = pool[restIdx % pool.length];
+      restIdx++;
+      const note = `${r.name} | 추천메뉴: ${r.menu.join(', ')} | 가격: ${r.price} | 예약: ${r.reservation} | ${r.location}`;
+      const cost = fallbackCost;
+      return makeSpot('', r.name, note, '', ['식사', '로컬맛집'], cost);
+    };
 
     for (let i = 1; i <= n; i++) {
       let spots = [];
       if (pins.length > 0) {
         const s1 = pins[((i-1)*2) % pins.length];
         const s2 = pins[((i-1)*2+1) % pins.length];
+        const lunch  = nextRest('lunch',  20000);
+        const dinner = nextRest('dinner', 30000);
         spots = [
-          makeSpot(s1.time||'10:00', s1.name, s1.note, '', ['추천 명소'], s1.cost||0),
-          makeSpot(s2.time||'15:00', s2.name, s2.note, '', ['인기 장소'], s2.cost||0),
-          makeSpot('19:00', `${city} 로컬 맛집탐방`, '리뷰와 평점이 높은 현지 식당 방문', '', ['식도락'], 30000)
+          makeSpot(s1.time||'10:00', s1.name, s1.note, '', ['명소'], s1.cost||0),
+          lunch  ? {...lunch,  time:'12:30'} : makeSpot('12:30','현지 점심','동네 현지 식당', '', ['식사'], 15000),
+          makeSpot(s2.time||'15:00', s2.name, s2.note, '', ['명소'], s2.cost||0),
+          dinner ? {...dinner, time:'19:00'} : makeSpot('19:00','현지 저녁','로컬 추천 식당', '', ['식사'], 25000)
         ];
       } else {
-        if (i === 1) spots = [makeSpot('15:00','체크인 & 주변 산책','도보 10분 반경 파악','처음 맡는 도시의 공기.',['혼잡도 낮음'],0),makeSpot('19:00','현지 저녁 식사','현지어 리뷰 많은 곳','',['로컬 추천'],20000)];
-        else spots = [makeSpot('09:00','주요 명소 탐방','현지 가이드 추천 코스','',[],15000),makeSpot('14:00','오후 카페 휴식','운치 있는 골목 카페','',[],8000),makeSpot('19:00','현지 저녁 식사','당일 예약 가능 레스토랑','',[],25000)];
+        const dinner = nextRest('dinner', 25000);
+        if (i === 1) spots = [
+          makeSpot('15:00','체크인 & 주변 산책','도보 10분 반경 파악','처음 맡는 도시의 공기.',['혼잡도 낮음'],0),
+          dinner ? {...dinner, time:'19:00'} : makeSpot('19:00','현지 저녁 식사','현지어 리뷰 많은 곳','',['식사'],20000)
+        ];
+        else {
+          const lunch2 = nextRest('lunch', 15000);
+          spots = [
+            makeSpot('09:00','주요 명소 탐방','현지 가이드 추천 코스','',[],15000),
+            lunch2  ? {...lunch2,  time:'12:30'} : makeSpot('12:30','현지 점심','동네 식당','',[],12000),
+            makeSpot('14:30','오후 명소 & 카페','운치 있는 골목 카페','',[],8000),
+            dinner  ? {...dinner,  time:'19:00'} : makeSpot('19:00','현지 저녁 식사','당일 예약 가능 레스토랑','',[],25000)
+          ];
+        }
       }
       days.push({day:i, title:i===1?'도착':i===n?'출발':'탐방', desc:'', spots});
     }

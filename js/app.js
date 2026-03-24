@@ -62,11 +62,12 @@ const App = {
   },
 
   /* ── 토스트 알림 ── */
-  toast(msg) {
+  toast(msg, duration = 2200) {
     const t = document.getElementById('shareToast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
+    clearTimeout(this._toastTimer);
+    this._toastTimer = setTimeout(() => t.classList.remove('show'), duration);
   },
 
   /* ── 아키타입 추정 (분석 전 비주얼용) ── */
