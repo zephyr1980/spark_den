@@ -309,5 +309,65 @@ const CONFIG = {
     'san_francisco':{ crowd: 48, explore: 62, pace: 47, immersion: 52 }, // 다채로운 동네, 상대적으로 여유
     'seattle':      { crowd: 55, explore: 60, pace: 55, immersion: 55 }, // 덜 붐비는 미국 도시
     'hawaii':       { crowd: 40, explore: 42, pace: 65, immersion: 38 }, // 자연 중심 여유, 관광 인프라 집중
+  },
+
+  /* ── 도시별 카드 팔레트 [primary, secondary] ── */
+  CITY_PALETTES: {
+    // 아시아
+    'tokyo':         ['#C9524A', '#2E3A59'],
+    'kyoto':         ['#C9849A', '#5C3D2E'],
+    'osaka':         ['#E8873A', '#2E3A59'],
+    'sapporo':       ['#6BA3C9', '#2E4A3E'],
+    'taipei':        ['#55B0A0', '#C4704B'],
+    'hong_kong':     ['#C9524A', '#1A2A3A'],
+    'singapore':     ['#4A9B7F', '#C4A84B'],
+    'bangkok':       ['#C4A84B', '#8B3A2A'],
+    'chiang_mai':    ['#7A9A7E', '#C4A84B'],
+    'da_nang':       ['#5BAFD6', '#C4A84B'],
+    'kota_kinabalu': ['#4A9B7F', '#6B8BA4'],
+    'bali':          ['#8B6914', '#5C8A3C'],
+    'shanghai':      ['#8B1A2E', '#2E3A59'],
+    // 유럽
+    'paris':         ['#6B7FA3', '#C4A84B'],
+    'london':        ['#2C4A6E', '#8B1A1A'],
+    'rome':          ['#C4704B', '#7A5A3C'],
+    'barcelona':     ['#D4722A', '#F0C030'],
+    'amsterdam':     ['#4A7FA5', '#B5462A'],
+    'berlin':        ['#5A5A7A', '#C4704B'],
+    'vienna':        ['#8B7A5C', '#C4A84B'],
+    'prague':        ['#8B5C3C', '#C4A84B'],
+    'budapest':      ['#8B5C3C', '#6B8BA4'],
+    'porto':         ['#D4722A', '#2C4A6E'],
+    'lisbon':        ['#D4722A', '#C4A84B'],
+    'istanbul':      ['#8B3A62', '#C4A84B'],
+    // 중동·아프리카
+    'dubai':         ['#D4A843', '#8B5C2C'],
+    'morocco':       ['#B54A2A', '#C4A84B'],
+    // 오세아니아
+    'sydney':        ['#5BAFD6', '#C4704B'],
+    // 북미
+    'new_york':      ['#3A3A5C', '#E8A87C'],
+    'san_francisco': ['#D4722A', '#6B8BA4'],
+    'seattle':       ['#4A7FA5', '#5A6A4A'],
+    'hawaii':        ['#5BAFD6', '#5C8A3C'],
+  },
+
+  /* ── 도시별 랜드마크 SVG 경로 (viewBox 0 0 60 90) ── */
+  CITY_LANDMARKS: {
+    'paris':     { d: 'M30,4 L18,56 L10,76 H16 L20,62 H40 L44,76 H50 L42,56 Z M22,40 H38', label: '에펠탑' },
+    'london':    { d: 'M30,3 V14 H26 V8 H22 V26 H16 V72 H44 V26 H38 V8 H34 V14 H30 Z M24,30 H36 M24,22 H36', label: '빅벤' },
+    'tokyo':     { d: 'M30,4 L10,74 H50 Z M17,44 H43 M20,58 H40', label: '도쿄타워' },
+    'barcelona': { d: 'M14,78 V52 L19,34 L24,52 V78 Z M36,78 V44 L41,18 L46,44 V78 Z', label: '사그라다 파밀리아' },
+    'kyoto':     { d: 'M8,74 V28 M52,74 V28 M3,36 Q30,20 57,36 M3,47 H57', label: '도리이' },
+    'rome':      { d: 'M8,76 Q8,22 30,22 Q52,22 52,76 Z M16,76 V62 M24,76 V56 M30,76 V54 M36,76 V56 M44,76 V62', label: '콜로세움' },
+    'sydney':    { d: 'M4,70 Q4,38 22,38 L22,70 Z M18,70 Q18,28 42,28 L42,70 Z M38,70 Q38,50 54,50 L54,70 Z', label: '오페라하우스' },
+    'dubai':     { d: 'M27,82 V20 L30,4 L33,20 V82 Z M24,46 H36 M25,28 H35 M26,14 H34', label: '부르즈 칼리파' },
+    'istanbul':  { d: 'M4,72 V50 Q4,24 30,24 Q56,24 56,50 V72 Z M50,72 V36 L54,26 L58,36 V72', label: '블루모스크' },
+    'amsterdam': { d: 'M4,76 V36 L14,20 L24,36 V76 Z M28,76 V28 L36,8 L44,28 V76 Z M48,76 V36 L54,20 L60,36 V76 Z', label: '운하 주택' },
+    'bangkok':   { d: 'M30,76 V50 L22,44 H38 Z M18,58 H42 M14,68 H46 M30,44 V8 L33,22 H27 Z', label: '왓 아룬' },
+    'new_york':  { d: 'M8,76 V44 H14 V34 H20 V24 H26 V14 H30 V6 H32 V76 Z M36,76 V26 H40 V32 H44 V38 H50 V76 Z', label: 'NYC 스카이라인' },
+    'singapore': { d: 'M10,76 V50 Q10,34 30,34 Q50,34 50,50 V76 Z M16,36 Q30,56 44,36', label: '마리나베이샌즈' },
+    'prague':    { d: 'M18,76 V30 L22,20 L26,30 V76 Z M32,76 V22 L36,10 L40,22 V76 Z M30,30 A4,6 0,1,1 30,29', label: '프라하 성' },
+    'vienna':    { d: 'M8,76 V44 Q8,20 30,20 Q52,20 52,44 V76 Z M22,76 V50 M30,76 V46 M38,76 V50', label: '성 슈테판 성당' },
   }
 };

@@ -76,9 +76,24 @@ Object.assign(App, {
     const scoreHtml = (score !== null && p)
       ? `<span class="city-card-score">${score}<small>%</small></span>` : '';
     const accentCls = level ? ` card-accent-${level.cls}` : '';
+
+    // 도시별 팔레트
+    const pal     = (cityId && CONFIG.CITY_PALETTES?.[cityId]) || ['#C4704B', '#7A9A7E'];
+    const palStyle = `--city-p1:${pal[0]};--city-p2:${pal[1]}`;
+
+    // 랜드마크 SVG (있을 때만)
+    const lm = cityId && CONFIG.CITY_LANDMARKS?.[cityId];
+    const landmark = lm
+      ? `<svg class="city-card-landmark" viewBox="0 0 60 90" aria-hidden="true">
+           <path d="${lm.d}" fill="${pal[0]}" stroke="none"/>
+         </svg>`
+      : '';
+
     return `<div class="city-card${level ? ' has-match' : ''}${accentCls}"
               onclick="App.pickCity(this,'${c}')"
+              style="${palStyle}"
               data-city-id="${cityId || ''}" data-match="${score ?? ''}">
+              ${landmark}
               <div class="city-card-top">
                 <span class="city-card-name">${c}</span>
                 ${scoreHtml}

@@ -190,6 +190,10 @@ Object.assign(App, {
 
   /* ── 일정 렌더링 ── */
   renderItinerary(it, city, dur, dateStr) {
+    // 현재 일정 데이터 AppState에 보관 (저장 버튼용)
+    AppState._currentItinerary = { it, city, dur, dateStr };
+    AppState._savedItinId = null;
+
     const { companion, accOrder, selectedNegatives: neg, currentProfile: p } = AppState;
     const cpl = {solo:'혼자',couple:'커플/친구',family:'가족',group:'그룹'}[companion] || '';
     const apl = CONFIG.ACC_PRIM_LABELS[accOrder[0]] || '';
@@ -246,6 +250,7 @@ Object.assign(App, {
       </div>
 
       <div class="itin-footer">
+        <button class="btn btn-save-itin" id="btnSaveItin" onclick="App.saveItineraryLink(this)">🔗 일정 링크로 저장</button>
         <button class="btn btn-ghost" onclick="App.goToPlan()">← 다른 도시로</button>
         <br><button class="btn btn-ghost" onclick="location.reload()" style="margin-top:.4rem">처음부터 다시</button>
       </div>`;
@@ -331,6 +336,54 @@ Object.assign(App, {
       days,
       tips: `[안내] 현재 AI 연결이 원활하지 않아 ${city}의 핵심 명소를 기반으로 전형적인 일정을 구성했습니다.`
     }, city, dur, dateStr);
+  },
+
+  /* ── 일정 링크 저장 ── */
+  async saveItineraryLink(btn) {
+    const snap = AppState._currentItinerary;
+    if (!snap) return;
+
+    // 이미 저장된 링크가 있으면 바로 복사
+    if (AppState._savedItinId) {
+      const link = `${location.origin}${location.pathname}?itin=${AppState._savedItinId}`;
+      await navigator.clipboard.writeText(link).catch(()=>{});
+      this.toast('공유 링크가 클립보드에 복사됐어요 ✓');
+      return;
+    }
+
+    const orig = btn.textContent;
+    btn.textContent = '저장 중...';
+    btn.disabled    = true;
+
+    try {
+      const payload = {
+        itinerary:  snap.it,
+        city:       snap.city,
+        dur:        snap.dur,
+        dateStr:    snap.dateStr,
+        profile:    AppState.currentProfile,
+        _savedAt:   Date.now()
+      };
+      const res  = await fetch('/api/db', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ action: 'saveItinerary', data: payload })
+      });
+      const json = await res.json();
+      if (!json.id) throw new Error('no id');
+
+      AppState._savedItinId = json.id;
+      const link = `${location.origin}${location.pathname}?itin=${json.id}`;
+      await navigator.clipboard.writeText(link).catch(()=>{});
+      btn.textContent = '✓ 링크 복사됨';
+      this.toast('일정 공유 링크가 클립보드에 복사됐어요 ✓');
+      fetch('/api/db', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({action:'logStat', event:'itin_saves'}) }).catch(()=>{});
+    } catch(e) {
+      btn.textContent = orig;
+      btn.disabled    = false;
+      this.toast('저장에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+    }
   },
 
   /* ── 동적 예산 계산 ── */

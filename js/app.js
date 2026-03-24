@@ -94,8 +94,84 @@ const App = {
   },
 
   /* ── 진입점 ── */
-  init() {
+  async init() {
     this.setProgress(0);
+
+    // URL 파라미터로 공유 링크 처리
+    const params  = new URLSearchParams(location.search);
+    const profId  = params.get('profile');
+    const itinId  = params.get('itin');
+
+    if (profId) {
+      await this._loadSharedProfile(profId);
+      return;
+    }
+    if (itinId) {
+      await this._loadSharedItinerary(itinId);
+      return;
+    }
+
     this.renderIntro();
+  },
+
+  /* ── 공유 프로필 로드 ── */
+  async _loadSharedProfile(id) {
+    document.getElementById('sLoad').innerHTML = `<div class="ld-wrap">
+      <div class="ld-spinner"></div>
+      <div class="ld-txt">공유된 여행 DNA 불러오는 중</div>
+      <div class="ld-sub">잠시만 기다려 주세요...</div>
+    </div>`;
+    this.showScreen('sLoad');
+    this.setProgress(50);
+
+    try {
+      const res  = await fetch(`/api/db?action=getProfile&id=${encodeURIComponent(id)}`);
+      const json = await res.json();
+      if (!json.data) throw new Error('not found');
+
+      AppState.currentProfile = json.data;
+      AppState._savedProfileId = id;
+      this.setProgress(100);
+      this.renderResult(json.data);
+
+      // 히스토리 정리 (파라미터 제거)
+      history.replaceState({}, '', location.pathname);
+    } catch(e) {
+      this.toast('공유 링크가 만료되었거나 존재하지 않습니다.');
+      this.setProgress(0);
+      this.renderIntro();
+      history.replaceState({}, '', location.pathname);
+    }
+  },
+
+  /* ── 공유 일정 로드 ── */
+  async _loadSharedItinerary(id) {
+    document.getElementById('sLoad').innerHTML = `<div class="ld-wrap">
+      <div class="ld-spinner"></div>
+      <div class="ld-txt">공유된 여행 일정 불러오는 중</div>
+      <div class="ld-sub">잠시만 기다려 주세요...</div>
+    </div>`;
+    this.showScreen('sLoad');
+    this.setProgress(50);
+
+    try {
+      const res  = await fetch(`/api/db?action=getItinerary&id=${encodeURIComponent(id)}`);
+      const json = await res.json();
+      if (!json.data) throw new Error('not found');
+
+      const { itinerary, city, dur, dateStr, profile } = json.data;
+      if (profile) AppState.currentProfile = profile;
+      AppState._savedItinId = id;
+      this.setProgress(100);
+      this.renderItinerary(itinerary, city, dur, dateStr || '미정');
+
+      // 히스토리 정리
+      history.replaceState({}, '', location.pathname);
+    } catch(e) {
+      this.toast('공유 링크가 만료되었거나 존재하지 않습니다.');
+      this.setProgress(0);
+      this.renderIntro();
+      history.replaceState({}, '', location.pathname);
+    }
   }
 };

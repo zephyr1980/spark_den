@@ -60,7 +60,7 @@ Object.assign(App, {
         <div class="res-cta">
           <div class="res-cta-btns">
             <button class="btn btn-primary" style="width:100%" onclick="App.goToPlan()">맞춤 일정 만들기 →</button>
-            <button class="share-btn" onclick="App.shareResult()">🔗 공유</button>
+            <button class="share-btn share-btn-save" onclick="App.saveProfileLink(this)" id="btnSaveProfile">🔗 링크로 저장</button>
             <button class="share-btn" onclick="App.copyResult()">📋 복사</button>
           </div>
           <div class="retry-row">
@@ -80,6 +80,45 @@ Object.assign(App, {
         setTimeout(() => el.style.width = w, 50);
       });
     }, 100);
+  },
+
+  async saveProfileLink(btn) {
+    const p = AppState.currentProfile;
+    if (!p) return;
+
+    // 이미 저장된 링크가 있으면 바로 복사
+    if (AppState._savedProfileId) {
+      const link = `${location.origin}${location.pathname}?profile=${AppState._savedProfileId}`;
+      await navigator.clipboard.writeText(link).catch(()=>{});
+      this.toast('공유 링크가 클립보드에 복사됐어요 ✓');
+      return;
+    }
+
+    const orig = btn.textContent;
+    btn.textContent = '저장 중...';
+    btn.disabled    = true;
+
+    try {
+      const res  = await fetch('/api/db', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ action: 'saveProfile', data: p })
+      });
+      const json = await res.json();
+      if (!json.id) throw new Error('no id');
+
+      AppState._savedProfileId = json.id;
+      const link = `${location.origin}${location.pathname}?profile=${json.id}`;
+      await navigator.clipboard.writeText(link).catch(()=>{});
+      btn.textContent = '✓ 링크 복사됨';
+      this.toast('공유 링크가 클립보드에 복사됐어요 ✓');
+      fetch('/api/db', { method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({action:'logStat', event:'profile_saves'}) }).catch(()=>{});
+    } catch(e) {
+      btn.textContent = orig;
+      btn.disabled    = false;
+      this.toast('저장에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+    }
   },
 
   shareResult() {

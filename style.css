@@ -916,3 +916,69 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
   border-color: rgba(123,108,240,.5);
   box-shadow: 0 0 10px rgba(123,108,240,.2);
 }
+
+/* ── DB 저장 / 공유 버튼 ── */
+.share-btn-save {
+  background: rgba(123,108,240,.15);
+  border: 1px solid rgba(123,108,240,.3);
+  color: #A084E8;
+  transition: background .2s, color .2s;
+}
+.share-btn-save:hover  { background: rgba(123,108,240,.25); }
+.share-btn-save:disabled { opacity: .55; cursor: default; }
+
+.btn-save-itin {
+  display: block;
+  width: 100%;
+  padding: .7rem 1rem;
+  margin-bottom: .7rem;
+  background: rgba(123,108,240,.12);
+  border: 1px solid rgba(123,108,240,.28);
+  border-radius: 10px;
+  color: #A084E8;
+  font-size: .85rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background .2s;
+}
+.btn-save-itin:hover    { background: rgba(123,108,240,.22); }
+.btn-save-itin:disabled { opacity: .55; cursor: default; }
+
+/* ── 도시 카드 팔레트 + 랜드마크 실루엣 ── */
+.city-card {
+  position: relative;
+  overflow: hidden;
+  /* 팔레트 기반 미묘한 배경 그라데이션 */
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--city-p1, #C4704B) 12%, transparent),
+    color-mix(in srgb, var(--city-p2, #7A9A7E) 8%, transparent)
+  );
+}
+/* 왼쪽 액센트 바 — 팔레트 primary 색 사용 */
+.city-card::before {
+  background: var(--city-p1, var(--terra));
+}
+/* 선택 상태 글로우도 팔레트 색으로 */
+.city-card.selected {
+  border-color: color-mix(in srgb, var(--city-p1, var(--terra)) 60%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--city-p1, var(--terra)) 35%, transparent);
+}
+
+/* 랜드마크 SVG 워터마크 */
+.city-card-landmark {
+  position: absolute;
+  right: -4px;
+  bottom: 0;
+  width: 44px;
+  height: 66px;
+  opacity: 0.13;
+  pointer-events: none;
+  transition: opacity .3s;
+}
+.city-card:hover .city-card-landmark {
+  opacity: 0.22;
+}
+.city-card.selected .city-card-landmark {
+  opacity: 0.30;
+}
