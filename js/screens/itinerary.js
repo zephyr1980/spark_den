@@ -82,15 +82,23 @@ Object.assign(App, {
     const levelMap  = { 1: '매우 저렴', 2: '저렴', 3: '보통', 4: '비쌈', 5: '매우 비쌈' };
     const costHint  = `이 도시의 물가 수준은 5점 만점에 ${costLevel}점(${levelMap[costLevel]}) 입니다.`;
 
-    return `여행 일정 전문가. JSON만 출력. 설명 없이 JSON만. ${cityContext}
-여행자:${p?.typeName||''}의 성향 반영. 기피(제외):${neg.join(',')||'없음'}
-여행지:${city} / 출발일:${dateStr} / 기간:${dur}일 / 요청:${wish||'없음'} / 물가:${costHint}
-규칙:
-- 하루 3~4개 spot(오전·점심·오후·저녁), 실제 현지 상호명(한국어), note에 주소·가격·팁 포함, mapFocus 1문장.
-- 식사 spot은 반드시 현지인이 실제로 즐겨 찾는 로컬 맛집으로 선정. 관광객용 식당·체인점·패스트푸드 제외.
-- 식당은 구글맵 기준 평점 4.3 이상 수준의 검증된 곳으로, 그 동네에서만 먹을 수 있는 메뉴나 대표 로컬 음식을 파는 곳 우선.
-- note에는 식당명(현지어 병기), 대표 메뉴 1~2개, 예상 가격대, 예약 필요 여부, 찾아가는 팁을 구체적으로 기술.
-{"destination":"","title":"","summary":"","palette":["#hex1","#hex2","#hex3"],"cityTagline":"","heroEmoji":"","mapFocus":"","budgetPerDay":{"food":0,"transport":0,"entrance":0},"days":[{"day":1,"title":"","desc":"","spots":[{"time":"09:00","name":"","note":"","sense":"","tags":[],"cost":0}]}],"tips":""}`;
+    return `여행 일정 전문가. JSON만 출력. 마크다운·설명 없이 JSON만.
+${cityContext}
+여행자:${p?.typeName||'일반 여행자'} / 기피(제외):${neg.join(',')||'없음'}
+여행지:${city} / 출발일:${dateStr} / 기간:${dur}일 / 요청:${wish||'없음'} / ${costHint}
+
+[필수 규칙]
+1. 하루 3~4개 spot — 오전 관광, 점심식사, 오후 관광, 저녁식사 순서.
+2. 관광 spot의 note: "한 문장 설명. 위치 힌트. 입장료(있을 경우). 현지 팁."
+3. 식사 spot 선정: 현지인이 즐겨 찾는 로컬 맛집만. 체인점·패스트푸드·관광지 식당 절대 제외.
+4. 식사 spot의 note는 반드시 아래 형식으로 작성 (이 형식을 그대로 따를 것):
+   "[식당명(현지어/원어)] | 추천메뉴: [메뉴명 1~2개] | 가격: [1인 예상] | 예약: [필요여부] | [찾아가는 팁]"
+   예시1) "스시 사이토(鮨 斉藤) | 추천메뉴: 오마카세 스시, 우니군칸 | 가격: 1인 8,000~12,000엔 | 예약: 2주 전 필요 | JR 시부야역 동쪽 출구 도보 3분, 지하 1층"
+   예시2) "멘야 무사시(麺屋武蔵) | 추천메뉴: 특제 츠케멘, 라멘 | 가격: 1인 1,200~1,500엔 | 예약: 불필요(웨이팅 가능) | 신주쿠 오모이데 요코초 골목 내"
+5. tags에 식사 spot은 ["식사","로컬맛집"] 포함, 관광 spot은 ["명소"] 또는 세부 태그 포함.
+6. cost는 1인 기준 원화 환산 금액(정수).
+
+{"destination":"","title":"","summary":"","palette":["#hex1","#hex2","#hex3"],"cityTagline":"","heroEmoji":"","mapFocus":"","budgetPerDay":{"food":0,"transport":0,"entrance":0},"days":[{"day":1,"title":"","desc":"","spots":[{"time":"09:00","name":"","note":"","sense":"","tags":[],"cost":0},{"time":"12:30","name":"","note":"[식당명(현지어)] | 추천메뉴: XX | 가격: 1인 XX | 예약: XX | 위치팁","sense":"","tags":["식사","로컬맛집"],"cost":0}]}],"tips":""}`;
   },
 
   /* ── 스트리밍 API 호출 ── */
