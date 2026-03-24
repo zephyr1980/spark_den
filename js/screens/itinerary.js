@@ -85,7 +85,11 @@ Object.assign(App, {
     return `여행 일정 전문가. JSON만 출력. 설명 없이 JSON만. ${cityContext}
 여행자:${p?.typeName||''}의 성향 반영. 기피(제외):${neg.join(',')||'없음'}
 여행지:${city} / 출발일:${dateStr} / 기간:${dur}일 / 요청:${wish||'없음'} / 물가:${costHint}
-규칙: 하루 3~4개 spot(오전·점심·오후·저녁), 실제 현지 상호명(한국어), note에 주소·가격·팁 포함, mapFocus 1문장.
+규칙:
+- 하루 3~4개 spot(오전·점심·오후·저녁), 실제 현지 상호명(한국어), note에 주소·가격·팁 포함, mapFocus 1문장.
+- 식사 spot은 반드시 현지인이 실제로 즐겨 찾는 로컬 맛집으로 선정. 관광객용 식당·체인점·패스트푸드 제외.
+- 식당은 구글맵 기준 평점 4.3 이상 수준의 검증된 곳으로, 그 동네에서만 먹을 수 있는 메뉴나 대표 로컬 음식을 파는 곳 우선.
+- note에는 식당명(현지어 병기), 대표 메뉴 1~2개, 예상 가격대, 예약 필요 여부, 찾아가는 팁을 구체적으로 기술.
 {"destination":"","title":"","summary":"","palette":["#hex1","#hex2","#hex3"],"cityTagline":"","heroEmoji":"","mapFocus":"","budgetPerDay":{"food":0,"transport":0,"entrance":0},"days":[{"day":1,"title":"","desc":"","spots":[{"time":"09:00","name":"","note":"","sense":"","tags":[],"cost":0}]}],"tips":""}`;
   },
 
