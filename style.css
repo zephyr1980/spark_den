@@ -948,11 +948,11 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
 .city-card {
   position: relative;
   overflow: hidden;
-  /* 팔레트 기반 미묘한 배경 그라데이션 */
+  /* 팔레트 기반 배경 그라데이션 — 파스텔 색상 + 적절한 불투명도 */
   background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--city-p1, #C4704B) 12%, transparent),
-    color-mix(in srgb, var(--city-p2, #7A9A7E) 8%, transparent)
+    140deg,
+    color-mix(in srgb, var(--city-p1, #C4704B) 22%, transparent) 0%,
+    color-mix(in srgb, var(--city-p2, #7A9A7E) 14%, transparent) 100%
   );
 }
 /* 왼쪽 액센트 바 — 팔레트 primary 색 사용 */
@@ -972,13 +972,13 @@ select.plan-input option{background:var(--ink);color:var(--cream)}
   bottom: 0;
   width: 44px;
   height: 66px;
-  opacity: 0.13;
+  opacity: 0.18;
   pointer-events: none;
   transition: opacity .3s;
 }
 .city-card:hover .city-card-landmark {
-  opacity: 0.22;
+  opacity: 0.30;
 }
 .city-card.selected .city-card-landmark {
-  opacity: 0.30;
+  opacity: 0.40;
 }

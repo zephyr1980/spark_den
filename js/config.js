@@ -313,43 +313,43 @@ const CONFIG = {
 
   /* ── 도시별 카드 팔레트 [primary, secondary] ── */
   CITY_PALETTES: {
-    // 아시아
-    'tokyo':         ['#C9524A', '#2E3A59'],
-    'kyoto':         ['#C9849A', '#5C3D2E'],
-    'osaka':         ['#E8873A', '#2E3A59'],
-    'sapporo':       ['#6BA3C9', '#2E4A3E'],
-    'taipei':        ['#55B0A0', '#C4704B'],
-    'hong_kong':     ['#C9524A', '#1A2A3A'],
-    'singapore':     ['#4A9B7F', '#C4A84B'],
-    'bangkok':       ['#C4A84B', '#8B3A2A'],
-    'chiang_mai':    ['#7A9A7E', '#C4A84B'],
-    'da_nang':       ['#5BAFD6', '#C4A84B'],
-    'kota_kinabalu': ['#4A9B7F', '#6B8BA4'],
-    'bali':          ['#8B6914', '#5C8A3C'],
-    'shanghai':      ['#8B1A2E', '#2E3A59'],
+    // 아시아 — 파스텔 버전
+    'tokyo':         ['#E8A898', '#A8A8C8'],  // 연산호 / 연보라
+    'kyoto':         ['#F0B0C8', '#D4B898'],  // 벚꽃 핑크 / 따뜻한 베이지
+    'osaka':         ['#F0B880', '#A8A8C8'],  // 피치 / 라벤더
+    'sapporo':       ['#A0C8E0', '#90C8A8'],  // 분말 하늘 / 민트
+    'taipei':        ['#80C8B8', '#E8A880'],  // 씨폼 / 피치
+    'hong_kong':     ['#F0A0A0', '#9098B8'],  // 소프트 코랄 / 슬레이트
+    'singapore':     ['#90C8A8', '#E0C880'],  // 민트 / 소프트 골드
+    'bangkok':       ['#E8D080', '#D4B080'],  // 따뜻한 골드 / 앰버
+    'chiang_mai':    ['#A8C8A0', '#E0D080'],  // 세이지 / 밀짚
+    'da_nang':       ['#90C0D8', '#E0D090'],  // 하늘 / 모래
+    'kota_kinabalu': ['#90C8C0', '#A0B8D0'],  // 씨 틸 / 하늘
+    'bali':          ['#D8C090', '#A0C898'],  // 앰버 / 열대 그린
+    'shanghai':      ['#D090A8', '#9090B8'],  // 모브 / 소프트 블루
     // 유럽
-    'paris':         ['#6B7FA3', '#C4A84B'],
-    'london':        ['#2C4A6E', '#8B1A1A'],
-    'rome':          ['#C4704B', '#7A5A3C'],
-    'barcelona':     ['#D4722A', '#F0C030'],
-    'amsterdam':     ['#4A7FA5', '#B5462A'],
-    'berlin':        ['#5A5A7A', '#C4704B'],
-    'vienna':        ['#8B7A5C', '#C4A84B'],
-    'prague':        ['#8B5C3C', '#C4A84B'],
-    'budapest':      ['#8B5C3C', '#6B8BA4'],
-    'porto':         ['#D4722A', '#2C4A6E'],
-    'lisbon':        ['#D4722A', '#C4A84B'],
-    'istanbul':      ['#8B3A62', '#C4A84B'],
+    'paris':         ['#A8B8D8', '#E0D090'],  // 더스티 블루 / 샴페인
+    'london':        ['#A0B0C8', '#D4A0A0'],  // 스틸 블루 / 소프트 로즈
+    'rome':          ['#E0A880', '#C8B090'],  // 소프트 테라코타 / 스톤
+    'barcelona':     ['#F0B880', '#F0E090'],  // 따뜻한 피치 / 레몬
+    'amsterdam':     ['#90B8D0', '#D4A090'],  // 운하 블루 / 브릭
+    'berlin':        ['#A8A8C0', '#E0A880'],  // 스틸 / 웜 코랄
+    'vienna':        ['#D8C8A8', '#F0E0A0'],  // 크림 / 샴페인
+    'prague':        ['#D4A888', '#E0D090'],  // 소프트 갈색 / 골드
+    'budapest':      ['#D4A888', '#A8B8D0'],  // 따뜻함 / 더스티 블루
+    'porto':         ['#F0B880', '#A0B0C8'],  // 피치 / 더스티 블루
+    'lisbon':        ['#F0B880', '#E8D090'],  // 따뜻한 피치 / 골드
+    'istanbul':      ['#C0A0C8', '#E0D090'],  // 소프트 퍼플 / 샴페인
     // 중동·아프리카
-    'dubai':         ['#D4A843', '#8B5C2C'],
-    'morocco':       ['#B54A2A', '#C4A84B'],
+    'dubai':         ['#E8D080', '#D8C098'],  // 브라이트 골드 / 샌드
+    'morocco':       ['#D89088', '#E8D090'],  // 소프트 코랄 / 사프란
     // 오세아니아
-    'sydney':        ['#5BAFD6', '#C4704B'],
+    'sydney':        ['#90C0D8', '#E0A880'],  // 항구 블루 / 따뜻한 코랄
     // 북미
-    'new_york':      ['#3A3A5C', '#E8A87C'],
-    'san_francisco': ['#D4722A', '#6B8BA4'],
-    'seattle':       ['#4A7FA5', '#5A6A4A'],
-    'hawaii':        ['#5BAFD6', '#5C8A3C'],
+    'new_york':      ['#9898C0', '#F0C8A8'],  // 소프트 네이비 / 피치 글로우
+    'san_francisco': ['#F0B880', '#A0B8D0'],  // 골든게이트 / 베이 블루
+    'seattle':       ['#90B8D0', '#A8B8A0'],  // 레인 블루 / 에버그린
+    'hawaii':        ['#88C8E0', '#A0D0A0'],  // 오션 / 팜 그린
   },
 
   /* ── 도시별 랜드마크 SVG 경로 (viewBox 0 0 60 90) ── */
