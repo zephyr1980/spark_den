@@ -105,5 +105,13 @@
         "note": "리스본 근교 1시간 거리의 동화 같은 궁전 도시. 페나 궁전의 알록달록 색상이 압도적이다."
       }
     ]
-  }
+  },
+  "restaurants": [
+    { "name": "제 다 모우라리아(Zé da Mouraria)", "meal_type": "lunch", "menu": ["바칼류 엠 민호타(대구 카라멜 양파)", "폴보 아 라가레이루(문어 올리브오일)"], "price": "1인 12~18유로", "reservation": "불필요(오픈 직후 방문 추천)", "location": "모우라리아 광장 근처, 지하철 마르팅 모니스역 도보 3분", "tags": ["타스카", "바칼류", "로컬"] },
+    { "name": "타스카 두 시쿠(Tasca do Chico)", "meal_type": "dinner", "menu": ["페티스코스 모둠", "카르네 드 포르쿠 아 알렌테자나(돼지고기 조개찜)"], "price": "1인 15~22유로", "reservation": "저녁 예약 필수(파두 공연 있음)", "location": "지하철 에스텔라역 도보 5분", "tags": ["파두", "타스카", "페티스코스"] },
+    { "name": "제 두스 코르누스(Zé dos Cornos)", "meal_type": "dinner", "menu": ["숯불 갈비(코스텔라스)", "토마토 샐러드"], "price": "1인 13~20유로", "reservation": "불필요(웨이팅 가능)", "location": "알파마 골목, 28번 트램 종점 포르타스 두 솔 인근", "tags": ["알파마", "숯불구이", "로컬"] },
+    { "name": "파스텔라리아 베르나르두(Pastelaria Bernardo)", "meal_type": "any", "menu": ["파스텔 드 나타(에그타르트)", "비파나(돼지고기 샌드위치)"], "price": "1인 3~6유로", "reservation": "불필요", "location": "바이샤 지구, 리스본 대성당 도보 5분", "tags": ["베이커리", "스낵", "아침"] },
+    { "name": "타베르나 다 루아 다스 플로레스(Taberna da Rua das Flores)", "meal_type": "lunch", "menu": ["페티스코스 현지 모둠", "아로스 드 파투(오리 리조또)"], "price": "1인 18~28유로", "reservation": "예약 권장", "location": "시아두, 카몽이스 광장 도보 3분", "tags": ["타베르나", "모던포르투갈"] },
+    { "name": "세르베자리아 하미루(Cervejaria Ramiro)", "meal_type": "dinner", "menu": ["감바스 그렐라다스(새우구이)", "상타굴라스(왕새우)"], "price": "1인 30~50유로", "reservation": "예약 필수(2주 전)", "location": "인텐덴테 광장 근처, 지하철 인텐덴테역 도보 2분", "tags": ["해산물", "스페셜"] }
+  ]
 }
